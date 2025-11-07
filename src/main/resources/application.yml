@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: olx
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/olx_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
