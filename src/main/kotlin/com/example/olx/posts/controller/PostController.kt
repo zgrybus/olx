@@ -1,6 +1,7 @@
 package com.example.olx.posts.controller
 
 import com.example.olx.posts.dto.PostDetailsDTO
+import com.example.olx.posts.dto.PostRequestDTO
 import com.example.olx.posts.dto.PostSummaryDTO
 import com.example.olx.posts.service.PostService
 import org.springframework.http.HttpStatus
@@ -21,4 +22,11 @@ class PostController(val postService: PostService) {
     @DeleteMapping("/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deletePostById(@PathVariable postId: Int) = postService.deletePostById(postId)
+
+    @PostMapping
+    fun addPost(@RequestBody postRequestDTO: PostRequestDTO): PostDetailsDTO = postService.addPost(postRequestDTO)
+
+    @PutMapping("/{postId}")
+    fun updatePost(@PathVariable postId: Int, @RequestBody postRequestDTO: PostRequestDTO): PostDetailsDTO =
+        postService.updatePost(postId, postRequestDTO)
 }
