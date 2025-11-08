@@ -9,6 +9,7 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
@@ -30,5 +31,22 @@ class PostExceptionHandler : Loggable {
         )
 
         return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handlePostNotValid(ex: MethodArgumentNotValidException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error { "Post not valid: $ex" }
+
+        val errorsDTO = ex.fieldErrors.map {
+            ErrorDTO(type = ErrorType.NOT_VALID, message = it.defaultMessage ?: "Argument is not valid")
+        }
+
+        val errorResponse = ErrorResponse(
+            errors = errorsDTO,
+            status = HttpStatus.BAD_REQUEST.value(),
+            path = request.getDescription(false)
+        )
+
+        return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
     }
 }

@@ -4,6 +4,7 @@ import com.example.olx.posts.dto.PostDetailsDTO
 import com.example.olx.posts.dto.PostRequestDTO
 import com.example.olx.posts.dto.PostSummaryDTO
 import com.example.olx.posts.service.PostService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -24,9 +25,10 @@ class PostController(val postService: PostService) {
     fun deletePostById(@PathVariable postId: Int) = postService.deletePostById(postId)
 
     @PostMapping
-    fun addPost(@RequestBody postRequestDTO: PostRequestDTO): PostDetailsDTO = postService.addPost(postRequestDTO)
+    fun addPost(@RequestBody @Valid postRequestDTO: PostRequestDTO): PostDetailsDTO =
+        postService.addPost(postRequestDTO)
 
     @PutMapping("/{postId}")
-    fun updatePost(@PathVariable postId: Int, @RequestBody postRequestDTO: PostRequestDTO): PostDetailsDTO =
+    fun updatePost(@PathVariable postId: Int, @RequestBody @Valid postRequestDTO: PostRequestDTO): PostDetailsDTO =
         postService.updatePost(postId, postRequestDTO)
 }

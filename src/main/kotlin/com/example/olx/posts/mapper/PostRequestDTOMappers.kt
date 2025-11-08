@@ -5,8 +5,8 @@ import com.example.olx.posts.entity.Post
 
 fun PostRequestDTO.toEntity(): Post = Post(
     id = null,
-    title = this.title,
-    description = this.description,
+    title = this.title!!,
+    description = this.description!!,
     createdAt = null,
     updatedAt = null,
 )

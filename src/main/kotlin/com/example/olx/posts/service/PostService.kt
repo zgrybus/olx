@@ -74,8 +74,8 @@ class PostService(
         return postRepository.findById(postId)
             .orElseThrow { PostNotFoundException("Post with $postId is not found") }
             .apply {
-                title = postRequestDTO.title
-                description = postRequestDTO.description
+                title = postRequestDTO.title!!
+                description = postRequestDTO.description!!
             }
             .toDetailsDTO()
     }
