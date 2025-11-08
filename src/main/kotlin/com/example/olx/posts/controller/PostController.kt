@@ -1,15 +1,24 @@
 package com.example.olx.posts.controller
 
-import com.example.olx.posts.entity.Post
+import com.example.olx.posts.dto.PostDetailsDTO
+import com.example.olx.posts.dto.PostSummaryDTO
 import com.example.olx.posts.service.PostService
+import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/api/posts")
 @Validated
 class PostController(val postService: PostService) {
 
     @GetMapping
-    fun getAllPosts(): List<Post> = postService.getAllPosts()
+    fun getAllPosts(): List<PostSummaryDTO> = postService.getAllPosts()
+
+    @GetMapping("/{postId}")
+    fun getPostById(@PathVariable postId: Int): PostDetailsDTO = postService.getPostById(postId)
+
+    @DeleteMapping("/{postId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deletePostById(@PathVariable postId: Int) = postService.deletePostById(postId)
 }
