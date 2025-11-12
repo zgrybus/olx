@@ -35,10 +35,12 @@ dependencies {
 
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
 
-    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property:$kotestVersion")
-    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-extensions-spring:$kotestVersion")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.jupiter", module = "junit-jupiter-engine")
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -58,6 +60,7 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+tasks.withType<Test>()
+    .configureEach {
+        useJUnitPlatform()
+    }

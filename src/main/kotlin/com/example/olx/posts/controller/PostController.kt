@@ -25,6 +25,7 @@ class PostController(val postService: PostService) {
     fun deletePostById(@PathVariable postId: Int) = postService.deletePostById(postId)
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     fun addPost(@RequestBody @Valid postRequestDTO: PostRequestDTO): PostDetailsDTO =
         postService.addPost(postRequestDTO)
 
