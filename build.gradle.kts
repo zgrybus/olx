@@ -22,6 +22,7 @@ repositories {
 }
 
 val kotestVersion = "6.0.4"
+val testcontainersVersion = "1.19.8"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -34,6 +35,9 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
 
     testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
