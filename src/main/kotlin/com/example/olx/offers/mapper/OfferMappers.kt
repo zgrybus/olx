@@ -2,10 +2,10 @@ package com.example.olx.offers.mapper
 
 import com.example.olx.offers.dto.OfferDetailsDTO
 import com.example.olx.offers.dto.OfferSummaryDTO
-import com.example.olx.offers.entity.Post
+import com.example.olx.offers.entity.Offer
 
 
-fun Post.toSummaryDTO(): OfferSummaryDTO = OfferSummaryDTO(
+fun Offer.toSummaryDTO(): OfferSummaryDTO = OfferSummaryDTO(
     id = this.id!!,
     title = this.title,
     description = this.description,
@@ -13,7 +13,7 @@ fun Post.toSummaryDTO(): OfferSummaryDTO = OfferSummaryDTO(
     updatedAt = this.updatedAt!!
 )
 
-fun Post.toDetailsDTO(): OfferDetailsDTO = OfferDetailsDTO(
+fun Offer.toDetailsDTO(): OfferDetailsDTO = OfferDetailsDTO(
     id = this.id!!,
     title = this.title,
     description = this.description,

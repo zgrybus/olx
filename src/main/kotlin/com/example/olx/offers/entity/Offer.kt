@@ -6,8 +6,8 @@ import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 
 @Entity
-@Table(name = "posts")
-class Post(
+@Table(name = "offers")
+class Offer(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
