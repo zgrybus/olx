@@ -1,8 +1,8 @@
-package com.example.olx.posts.dto
+package com.example.olx.offers.dto
 
 import jakarta.validation.constraints.NotBlank
 
-data class PostRequestDTO(
+data class OfferRequestDTO(
     @get:NotBlank(message = "Title is required")
     val title: String?,
     @get:NotBlank(message = "Description is required")
