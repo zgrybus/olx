@@ -13,6 +13,8 @@ class Post(
     val id: Long? = null,
 
     var title: String,
+
+    @Column(columnDefinition = "TEXT")
     var description: String,
 
     @CreationTimestamp

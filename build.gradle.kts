@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.spring") version "2.2.21"
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("plugin.jpa") version "1.9.25"
+    kotlin("plugin.jpa") version "2.2.21"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
@@ -21,6 +21,9 @@ repositories {
     mavenCentral()
 }
 
+val kotestVersion = "6.0.4"
+val testcontainersVersion = "1.21.3"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -33,15 +36,19 @@ dependencies {
 
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "org.junit.jupiter", module = "junit-jupiter")
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-    }
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
 
-    val kotestVersion = "6.0.4"
+    testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property:$kotestVersion")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-extensions-spring:$kotestVersion")
 
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.jupiter", module = "junit-jupiter-engine")
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -57,6 +64,7 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+tasks.withType<Test>()
+    .configureEach {
+        useJUnitPlatform()
+    }

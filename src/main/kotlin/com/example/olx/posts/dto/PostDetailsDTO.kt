@@ -2,7 +2,7 @@ package com.example.olx.posts.dto
 
 import java.time.Instant
 
-data class PostDTO(
+data class PostDetailsDTO(
     val id: Long,
     val title: String,
     val description: String,
