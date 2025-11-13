@@ -23,7 +23,7 @@ export function OfferItem({
   description,
 }: OfferItemProps) {
   return (
-    <li className="bg-white p-2 h-[120px] shadow-sm flex flex-col justify-between font-normal md:h-[40]">
+    <li className="bg-white p-2 h-[120px] shadow-sm flex flex-col justify-between font-normal md:h-40">
       <div className="flex justify-between gap-3">
         <h3 className="text-base font-medium line-clamp-2" title={title}>
           {title}
