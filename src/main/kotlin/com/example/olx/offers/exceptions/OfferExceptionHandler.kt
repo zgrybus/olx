@@ -1,10 +1,10 @@
-package com.example.olx.posts.exceptions
+package com.example.olx.offers.exceptions
 
 import com.example.olx.Loggable
 import com.example.olx.exceptions.dto.ErrorDTO
 import com.example.olx.exceptions.dto.ErrorResponse
 import com.example.olx.exceptions.dto.ErrorType
-import com.example.olx.posts.controller.PostController
+import com.example.olx.offers.controller.OfferController
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@RestControllerAdvice(assignableTypes = [PostController::class])
-class PostExceptionHandler : Loggable {
+@RestControllerAdvice(assignableTypes = [OfferController::class])
+class OfferExceptionHandler : Loggable {
 
-    @ExceptionHandler(PostNotFoundException::class)
-    fun handlePostNotFound(ex: PostNotFoundException, request: WebRequest): ResponseEntity<ErrorResponse> {
-        logger.error { "Post not found: $ex" }
+    @ExceptionHandler(OfferNotFoundException::class)
+    fun handleOfferNotFound(ex: OfferNotFoundException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error { "Offer not found: $ex" }
 
-        val errorDTO = ErrorDTO(type = ErrorType.NOT_FOUND, message = ex.message ?: "Post not found")
+        val errorDTO = ErrorDTO(type = ErrorType.NOT_FOUND, message = ex.message ?: "Offer not found")
 
         val errorResponse = ErrorResponse(
             errors = listOf(errorDTO),
@@ -34,8 +34,8 @@ class PostExceptionHandler : Loggable {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handlePostNotValid(ex: MethodArgumentNotValidException, request: WebRequest): ResponseEntity<ErrorResponse> {
-        logger.error { "Post not valid: $ex" }
+    fun handleOfferNotValid(ex: MethodArgumentNotValidException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error { "Offer not valid: $ex" }
 
         val errorsDTO = ex.fieldErrors.map {
             ErrorDTO(type = ErrorType.NOT_VALID, message = it.defaultMessage ?: "Argument is not valid")

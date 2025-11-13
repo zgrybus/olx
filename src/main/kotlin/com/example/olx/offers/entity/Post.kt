@@ -1,4 +1,4 @@
-package com.example.olx.posts.entity
+package com.example.olx.offers.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp

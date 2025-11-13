@@ -1,11 +1,11 @@
-package com.example.olx.posts.mapper
+package com.example.olx.offers.mapper
 
-import com.example.olx.posts.dto.PostDetailsDTO
-import com.example.olx.posts.dto.PostSummaryDTO
-import com.example.olx.posts.entity.Post
+import com.example.olx.offers.dto.OfferDetailsDTO
+import com.example.olx.offers.dto.OfferSummaryDTO
+import com.example.olx.offers.entity.Post
 
 
-fun Post.toSummaryDTO(): PostSummaryDTO = PostSummaryDTO(
+fun Post.toSummaryDTO(): OfferSummaryDTO = OfferSummaryDTO(
     id = this.id!!,
     title = this.title,
     description = this.description,
@@ -13,7 +13,7 @@ fun Post.toSummaryDTO(): PostSummaryDTO = PostSummaryDTO(
     updatedAt = this.updatedAt!!
 )
 
-fun Post.toDetailsDTO(): PostDetailsDTO = PostDetailsDTO(
+fun Post.toDetailsDTO(): OfferDetailsDTO = OfferDetailsDTO(
     id = this.id!!,
     title = this.title,
     description = this.description,

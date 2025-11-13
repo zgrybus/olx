@@ -1,14 +1,14 @@
-package com.example.olx.posts.controller
+package com.example.olx.offers.controller
 
 import com.example.olx.BaseIntegrationTest
 import com.example.olx.exceptions.dto.ErrorDTO
 import com.example.olx.exceptions.dto.ErrorResponse
 import com.example.olx.exceptions.dto.ErrorType
-import com.example.olx.posts.dto.PostDetailsDTO
-import com.example.olx.posts.dto.PostRequestDTO
-import com.example.olx.posts.dto.PostSummaryDTO
-import com.example.olx.posts.entity.Post
-import com.example.olx.posts.repository.PostRepository
+import com.example.olx.offers.dto.PostDetailsDTO
+import com.example.olx.offers.dto.PostRequestDTO
+import com.example.olx.offers.dto.PostSummaryDTO
+import com.example.olx.offers.entity.Post
+import com.example.olx.offers.repository.PostRepository
 import io.kotest.matchers.date.shouldBeBefore
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe

@@ -1,8 +1,8 @@
-package com.example.olx.posts.dto
+package com.example.olx.offers.dto
 
 import java.time.Instant
 
-data class PostDetailsDTO(
+data class OfferSummaryDTO(
     val id: Long,
     val title: String,
     val description: String,
