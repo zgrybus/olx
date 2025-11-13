@@ -22,7 +22,7 @@ repositories {
 }
 
 val kotestVersion = "6.0.4"
-val testcontainersVersion = "1.19.8"
+val testcontainersVersion = "1.21.3"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
