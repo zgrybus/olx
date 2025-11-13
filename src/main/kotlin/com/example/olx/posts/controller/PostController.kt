@@ -18,11 +18,11 @@ class PostController(val postService: PostService) {
     fun getAllPosts(): List<PostSummaryDTO> = postService.getAllPosts()
 
     @GetMapping("/{postId}")
-    fun getPostById(@PathVariable postId: Int): PostDetailsDTO = postService.getPostById(postId)
+    fun getPostById(@PathVariable postId: Long): PostDetailsDTO = postService.getPostById(postId)
 
     @DeleteMapping("/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deletePostById(@PathVariable postId: Int) = postService.deletePostById(postId)
+    fun deletePostById(@PathVariable postId: Long) = postService.deletePostById(postId)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,6 +30,6 @@ class PostController(val postService: PostService) {
         postService.addPost(postRequestDTO)
 
     @PutMapping("/{postId}")
-    fun updatePost(@PathVariable postId: Int, @RequestBody @Valid postRequestDTO: PostRequestDTO): PostDetailsDTO =
+    fun updatePost(@PathVariable postId: Long, @RequestBody @Valid postRequestDTO: PostRequestDTO): PostDetailsDTO =
         postService.updatePost(postId, postRequestDTO)
 }

@@ -33,7 +33,7 @@ class PostService(
     }
 
     @Transactional(readOnly = true)
-    fun getPostById(postId: Int): PostDetailsDTO {
+    fun getPostById(postId: Long): PostDetailsDTO {
         logger.info { "Attempting to get post by id $postId" }
 
         return postRepository.findById(postId)
@@ -45,7 +45,7 @@ class PostService(
     }
 
     @Transactional
-    fun deletePostById(postId: Int) {
+    fun deletePostById(postId: Long) {
         logger.info { "Attempting to delete post by id $postId" }
 
         postRepository.findById(postId)
@@ -68,15 +68,18 @@ class PostService(
     }
 
     @Transactional
-    fun updatePost(postId: Int, postRequestDTO: PostRequestDTO): PostDetailsDTO {
+    fun updatePost(postId: Long, postRequestDTO: PostRequestDTO): PostDetailsDTO {
         logger.info { "Attempting to update post by id $postId" }
 
-        return postRepository.findById(postId)
+        val postToUpdate = postRepository.findById(postId)
             .orElseThrow { PostNotFoundException("Post with $postId is not found") }
             .apply {
                 title = postRequestDTO.title!!
                 description = postRequestDTO.description!!
             }
+
+        return postRepository.saveAndFlush(postToUpdate)
+            .also { logger.info { "Successfully updated post: $it" } }
             .toDetailsDTO()
     }
 }
