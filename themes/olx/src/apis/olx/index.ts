@@ -1,0 +1,9 @@
+import createFetchClient from "openapi-fetch";
+import createClient from "openapi-react-query";
+import type { paths } from "./generated/types";
+
+const fetchClient = createFetchClient<paths>({
+  baseUrl: import.meta.env.VITE_OLX_SERVICE_URL,
+});
+
+export const $olxApi = createClient(fetchClient);
