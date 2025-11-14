@@ -9,4 +9,5 @@ fun OfferRequestDTO.toEntity(): Offer = Offer(
     description = this.description!!,
     createdAt = null,
     updatedAt = null,
+    price = this.price!!
 )

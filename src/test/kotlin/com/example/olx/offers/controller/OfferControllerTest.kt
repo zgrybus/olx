@@ -8,6 +8,8 @@ import com.example.olx.offers.dto.OfferDetailsDTO
 import com.example.olx.offers.dto.OfferRequestDTO
 import com.example.olx.offers.dto.OfferSummaryDTO
 import com.example.olx.offers.entity.Offer
+import com.example.olx.offers.mapper.toDetailsDTO
+import com.example.olx.offers.mapper.toSummaryDTO
 import com.example.olx.offers.repository.OfferRepository
 import io.kotest.matchers.date.shouldBeBefore
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -34,10 +36,10 @@ class OfferControllerTest : BaseIntegrationTest() {
 
         describe("GET /api/offers") {
             it("gets all offers") {
-                offerRepository.saveAll(
+                val offers = offerRepository.saveAll(
                     listOf(
-                        Offer(title = "offer_title_1", description = "offer_description_1"),
-                        Offer(title = "offer_title_2", description = "offer_description_2")
+                        Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                        Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
                     )
                 )
 
@@ -48,20 +50,8 @@ class OfferControllerTest : BaseIntegrationTest() {
                     objectMapper.readValue(response.contentAsString, Array<OfferSummaryDTO>::class.java)
 
                 response.status.shouldBe(HttpStatus.OK.value())
-                with(returnedOffers[0]) {
-                    id.shouldNotBeNull()
-                    title.shouldBe("offer_title_1")
-                    description.shouldBe("offer_description_1")
-                    createdAt.shouldBeBefore(Instant.now())
-                    updatedAt.shouldBeBefore(Instant.now())
-                }
-                with(returnedOffers[1]) {
-                    id.shouldNotBeNull()
-                    title.shouldBe("offer_title_2")
-                    description.shouldBe("offer_description_2")
-                    createdAt.shouldBeBefore(Instant.now())
-                    updatedAt.shouldBeBefore(Instant.now())
-                }
+                returnedOffers[0].shouldBe(offers[0].toSummaryDTO())
+                returnedOffers[1].shouldBe(offers[1].toSummaryDTO())
             }
 
             it("gets empty list, when there are no offers") {
@@ -82,24 +72,18 @@ class OfferControllerTest : BaseIntegrationTest() {
             it("gets offer by id") {
                 val offers = offerRepository.saveAll(
                     listOf(
-                        Offer(title = "offer_title_1", description = "offer_description_1"),
-                        Offer(title = "offer_title_2", description = "offer_description_2")
+                        Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                        Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
                     )
                 )
-                val offerToUpdate = offers[0]
-                val response = mockMvc.get("/api/offers/${offerToUpdate.id}")
+                val offerToGet = offers[0]
+                val response = mockMvc.get("/api/offers/${offerToGet.id}")
                     .andReturn().response
 
                 val returnedOffer = objectMapper.readValue(response.contentAsString, OfferDetailsDTO::class.java)
 
                 response.status.shouldBe(HttpStatus.OK.value())
-                with(returnedOffer) {
-                    id.shouldBe(offerToUpdate.id)
-                    title.shouldBe("offer_title_1")
-                    description.shouldBe("offer_description_1")
-                    createdAt.shouldBe(offerToUpdate.createdAt)
-                    updatedAt.shouldBe(offerToUpdate.updatedAt)
-                }
+                returnedOffer.shouldBe(offerToGet.toDetailsDTO())
             }
 
             it("returns an error, when offer is not found") {
@@ -124,7 +108,11 @@ class OfferControllerTest : BaseIntegrationTest() {
         describe("POST /api/offers") {
             it("adds new offer") {
                 val requestedOffer =
-                    OfferRequestDTO(title = "offer_request_title_1", description = "offer_request_description_1")
+                    OfferRequestDTO(
+                        title = "offer_request_title_1",
+                        description = "offer_request_description_1",
+                        price = 10
+                    )
 
                 val response = mockMvc.post("/api/offers") {
                     contentType = MediaType.APPLICATION_JSON
@@ -136,9 +124,10 @@ class OfferControllerTest : BaseIntegrationTest() {
 
                 response.status.shouldBe(HttpStatus.CREATED.value())
                 with(returnedOffer) {
+                    title.shouldBe(requestedOffer.title)
+                    description.shouldBe(requestedOffer.description)
+                    price.shouldBe(requestedOffer.price)
                     id.shouldNotBeNull()
-                    title.shouldBe("offer_request_title_1")
-                    description.shouldBe("offer_request_description_1")
                     createdAt.shouldBeBefore(Instant.now())
                     updatedAt.shouldBeBefore(Instant.now())
                 }
@@ -146,61 +135,115 @@ class OfferControllerTest : BaseIntegrationTest() {
                 val offerFromDb = offerRepository.findById(returnedOffer.id)
                     .get()
 
-                with(offerFromDb) {
-                    id.shouldBe(returnedOffer.id)
-                    title.shouldBe("offer_request_title_1")
-                    description.shouldBe("offer_request_description_1")
-                    createdAt!!.shouldBeBefore(Instant.now())
-                    updatedAt!!.shouldBeBefore(Instant.now())
-                }
+                returnedOffer.shouldBe(offerFromDb.toDetailsDTO())
             }
 
-            it("gets an error, when title is not set") {
-                val requestedOffer =
-                    OfferRequestDTO(title = null, description = "offer_request_description_1")
+            describe("Validation") {
+                it("gets an error, when title is not set") {
+                    val requestedOffer =
+                        OfferRequestDTO(title = null, description = "offer_request_description_1", price = 10)
 
-                val response = mockMvc.post("/api/offers") {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(requestedOffer)
-                }
-                    .andReturn().response
+                    val response = mockMvc.post("/api/offers") {
+                        contentType = MediaType.APPLICATION_JSON
+                        content = objectMapper.writeValueAsString(requestedOffer)
+                    }
+                        .andReturn().response
 
-                val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
 
-                val expectedError = ErrorResponse(
-                    status = HttpStatus.BAD_REQUEST.value(),
-                    path = "uri=/api/offers",
-                    errors = listOf(
-                        ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                    val expectedError = ErrorResponse(
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        path = "uri=/api/offers",
+                        errors = listOf(
+                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                        )
                     )
-                )
 
-                response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                returnedError.shouldBe(expectedError)
-            }
-
-            it("gets an error, when description is not set") {
-                val requestedOffer =
-                    OfferRequestDTO(title = "offer_request_title_1", description = null)
-
-                val response = mockMvc.post("/api/offers") {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(requestedOffer)
+                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                    returnedError.shouldBe(expectedError)
                 }
-                    .andReturn().response
 
-                val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+                it("gets an error, when description is not set") {
+                    val requestedOffer =
+                        OfferRequestDTO(title = "offer_request_title_1", description = null, price = 10)
 
-                val expectedError = ErrorResponse(
-                    status = HttpStatus.BAD_REQUEST.value(),
-                    path = "uri=/api/offers",
-                    errors = listOf(
-                        ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
+                    val response = mockMvc.post("/api/offers") {
+                        contentType = MediaType.APPLICATION_JSON
+                        content = objectMapper.writeValueAsString(requestedOffer)
+                    }
+                        .andReturn().response
+
+                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                    val expectedError = ErrorResponse(
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        path = "uri=/api/offers",
+                        errors = listOf(
+                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
+                        )
                     )
-                )
 
-                response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                returnedError.shouldBe(expectedError)
+                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                    returnedError.shouldBe(expectedError)
+                }
+
+                describe("Price") {
+                    it("gets an error, when price is not set") {
+                        val requestedOffer =
+                            OfferRequestDTO(
+                                title = "offer_request_title_1",
+                                description = "offer_request_description_1",
+                                price = null
+                            )
+
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Price is required")
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("gets an error, when price is lower than 0") {
+                        val requestedOffer =
+                            OfferRequestDTO(
+                                title = "offer_request_title_1",
+                                description = "offer_request_description_1",
+                                price = -1
+                            )
+
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Price cannot be negative")
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+                }
             }
         }
 
@@ -208,8 +251,8 @@ class OfferControllerTest : BaseIntegrationTest() {
             it("deletes offer by id") {
                 val offers = offerRepository.saveAll(
                     listOf(
-                        Offer(title = "offer_title_1", description = "offer_description_1"),
-                        Offer(title = "offer_title_2", description = "offer_description_2")
+                        Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                        Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
                     )
                 )
                 val removedOffer = offers[0]
@@ -228,6 +271,7 @@ class OfferControllerTest : BaseIntegrationTest() {
                     id.shouldBe(notRemovedOffer.id)
                     title.shouldBe(notRemovedOffer.title)
                     description.shouldBe(notRemovedOffer.description)
+                    price.shouldBe(notRemovedOffer.price)
                     createdAt.shouldBe(notRemovedOffer.createdAt)
                     updatedAt.shouldBe(notRemovedOffer.updatedAt)
                 }
@@ -256,12 +300,13 @@ class OfferControllerTest : BaseIntegrationTest() {
             it("updates offer by id") {
                 val offers = offerRepository.saveAll(
                     listOf(
-                        Offer(title = "offer_title_1", description = "offer_description_1"),
-                        Offer(title = "offer_title_2", description = "offer_description_2")
+                        Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                        Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
                     )
                 )
                 val offerToUpdate = offers[0]
-                val updatedOffer = OfferRequestDTO(title = "updated_title_1", description = "updated_description_1")
+                val updatedOffer =
+                    OfferRequestDTO(title = "updated_title_1", description = "updated_description_1", price = 30)
 
                 val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
                     contentType = MediaType.APPLICATION_JSON
@@ -276,6 +321,7 @@ class OfferControllerTest : BaseIntegrationTest() {
                     id.shouldBe(offerToUpdate.id)
                     title.shouldBe(updatedOffer.title)
                     description.shouldBe(updatedOffer.description)
+                    price.shouldBe(30)
                     createdAt.shouldBe(offerToUpdate.createdAt)
                     updatedAt.shouldNotBe(offerToUpdate.updatedAt)
                         .shouldBeBefore(Instant.now())
@@ -288,6 +334,7 @@ class OfferControllerTest : BaseIntegrationTest() {
                     id.shouldBe(offerToUpdate.id)
                     title.shouldBe(updatedOffer.title)
                     description.shouldBe(updatedOffer.description)
+                    price.shouldBe(30)
                     createdAt.shouldBe(offerToUpdate.createdAt)
                     updatedAt!!.shouldNotBe(offerToUpdate.updatedAt)
                         .shouldBeBefore(Instant.now())
@@ -312,64 +359,136 @@ class OfferControllerTest : BaseIntegrationTest() {
                 returnedError.shouldBe(expectedError)
             }
 
-            it("returns an error, when title is not set") {
-                val offers = offerRepository.saveAll(
-                    listOf(
-                        Offer(title = "offer_title_1", description = "offer_description_1"),
-                        Offer(title = "offer_title_2", description = "offer_description_2")
+            describe("Validation") {
+                it("returns an error, when title is not set") {
+                    val offers = offerRepository.saveAll(
+                        listOf(
+                            Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                            Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                        )
                     )
-                )
-                val offerToUpdate = offers[0]
-                val updatedOffer = OfferRequestDTO(title = null, description = "updated_description_1")
+                    val offerToUpdate = offers[0]
+                    val updatedOffer = OfferRequestDTO(title = null, description = "updated_description_1", price = 30)
 
-                val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(updatedOffer)
+                    val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                        contentType = MediaType.APPLICATION_JSON
+                        content = objectMapper.writeValueAsString(updatedOffer)
+                    }
+                        .andReturn().response
+
+                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                    val expectedError = ErrorResponse(
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        path = "uri=/api/offers/${offerToUpdate.id}",
+                        errors = listOf(
+                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                        )
+                    )
+
+                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                    returnedError.shouldBe(expectedError)
                 }
-                    .andReturn().response
 
-                val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
-
-                val expectedError = ErrorResponse(
-                    status = HttpStatus.BAD_REQUEST.value(),
-                    path = "uri=/api/offers/${offerToUpdate.id}",
-                    errors = listOf(
-                        ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                it("returns an error, when description is not set") {
+                    val offers = offerRepository.saveAll(
+                        listOf(
+                            Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                            Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                        )
                     )
-                )
+                    val offerToUpdate = offers[0]
+                    val updatedOffer = OfferRequestDTO(title = "updated_title_1", description = null, price = 30)
 
-                response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                returnedError.shouldBe(expectedError)
-            }
+                    val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                        contentType = MediaType.APPLICATION_JSON
+                        content = objectMapper.writeValueAsString(updatedOffer)
+                    }
+                        .andReturn().response
 
-            it("returns an error, when description is not set") {
-                val offers = offerRepository.saveAll(
-                    listOf(
-                        Offer(title = "offer_title_1", description = "offer_description_1"),
-                        Offer(title = "offer_title_2", description = "offer_description_2")
+                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                    val expectedError = ErrorResponse(
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        path = "uri=/api/offers/${offerToUpdate.id}",
+                        errors = listOf(
+                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
+                        )
                     )
-                )
-                val offerToUpdate = offers[0]
-                val updatedOffer = OfferRequestDTO(title = "updated_title_1", description = null)
 
-                val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(updatedOffer)
+                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                    returnedError.shouldBe(expectedError)
                 }
-                    .andReturn().response
 
-                val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+                describe("Price") {
+                    it("returns an error, when price is not set") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                                Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                            )
+                        )
+                        val offerToUpdate = offers[0]
+                        val updatedOffer = OfferRequestDTO(
+                            title = "updated_title_1",
+                            description = "updated_description_1",
+                            price = null
+                        )
 
-                val expectedError = ErrorResponse(
-                    status = HttpStatus.BAD_REQUEST.value(),
-                    path = "uri=/api/offers/${offerToUpdate.id}",
-                    errors = listOf(
-                        ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
-                    )
-                )
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
 
-                response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                returnedError.shouldBe(expectedError)
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Price is required")
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("returns an error, when price is lower than 0") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
+                                Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                            )
+                        )
+                        val offerToUpdate = offers[0]
+                        val updatedOffer = OfferRequestDTO(
+                            title = "updated_title_1",
+                            description = "updated_description_1",
+                            price = -1
+                        )
+
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Price cannot be negative")
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+                }
             }
         }
     }

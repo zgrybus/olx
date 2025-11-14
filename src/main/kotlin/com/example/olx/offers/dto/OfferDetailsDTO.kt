@@ -8,4 +8,5 @@ data class OfferDetailsDTO(
     val description: String,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val price: Int,
 )

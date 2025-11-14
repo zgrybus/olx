@@ -12,14 +12,20 @@ class Offer(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Column(nullable = false)
     var title: String,
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     var description: String,
 
+    @Column(nullable = false)
+    var price: Int,
+
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     var createdAt: Instant? = null,
 
     @UpdateTimestamp
+    @Column(nullable = false)
     var updatedAt: Instant? = null,
 ) {}

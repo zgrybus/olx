@@ -8,6 +8,7 @@ import com.example.olx.offers.exceptions.OfferNotFoundException
 import com.example.olx.offers.mapper.toDetailsDTO
 import com.example.olx.offers.mapper.toEntity
 import com.example.olx.offers.mapper.toSummaryDTO
+import com.example.olx.offers.mapper.toUpdateWithRequestDto
 import com.example.olx.offers.repository.OfferRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -73,10 +74,7 @@ class OfferService(
 
         val offerToUpdate = offerRepository.findById(offerId)
             .orElseThrow { OfferNotFoundException("Offer with $offerId is not found") }
-            .apply {
-                title = offerRequestDTO.title!!
-                description = offerRequestDTO.description!!
-            }
+            .toUpdateWithRequestDto(offerRequestDTO)
 
         return offerRepository.saveAndFlush(offerToUpdate)
             .also { logger.info { "Successfully updated offer: $it" } }
