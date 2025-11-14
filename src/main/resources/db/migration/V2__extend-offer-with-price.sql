@@ -1,0 +1,17 @@
+ALTER TABLE offers
+    ADD price INTEGER;
+
+ALTER TABLE offers
+    ALTER COLUMN price SET NOT NULL;
+
+ALTER TABLE offers
+    ALTER COLUMN created_at SET NOT NULL;
+
+ALTER TABLE offers
+    ALTER COLUMN description SET NOT NULL;
+
+ALTER TABLE offers
+    ALTER COLUMN title SET NOT NULL;
+
+ALTER TABLE offers
+    ALTER COLUMN updated_at SET NOT NULL;
