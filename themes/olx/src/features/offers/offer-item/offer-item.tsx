@@ -9,7 +9,7 @@ const dateTimeFormat = dateTimeFormatUtil({
 
 type OfferItemProps = {
   title: string;
-  price: string;
+  price: number;
   createdAt: string;
   updatedAt: string;
   description: string;
@@ -29,7 +29,7 @@ export function OfferItem({
           {title}
         </h3>
         <p className="text-base font-bold whitespace-nowrap shrink-0">
-          {priceFormatUtil.format(parseFloat(price))}
+          {priceFormatUtil.format(price)}
         </p>
       </div>
       <div className="flex-1 min-h-0 overflow-hidden relative mt-5 mb-3 hidden md:block">
