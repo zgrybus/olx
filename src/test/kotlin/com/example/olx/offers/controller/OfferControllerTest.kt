@@ -8,6 +8,8 @@ import com.example.olx.offers.dto.OfferDetailsDTO
 import com.example.olx.offers.dto.OfferRequestDTO
 import com.example.olx.offers.dto.OfferSummaryDTO
 import com.example.olx.offers.entity.Offer
+import com.example.olx.offers.mapper.toDetailsDTO
+import com.example.olx.offers.mapper.toSummaryDTO
 import com.example.olx.offers.repository.OfferRepository
 import io.kotest.matchers.date.shouldBeBefore
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -34,7 +36,7 @@ class OfferControllerTest : BaseIntegrationTest() {
 
         describe("GET /api/offers") {
             it("gets all offers") {
-                offerRepository.saveAll(
+                val offers = offerRepository.saveAll(
                     listOf(
                         Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
                         Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
@@ -48,22 +50,8 @@ class OfferControllerTest : BaseIntegrationTest() {
                     objectMapper.readValue(response.contentAsString, Array<OfferSummaryDTO>::class.java)
 
                 response.status.shouldBe(HttpStatus.OK.value())
-                with(returnedOffers[0]) {
-                    id.shouldNotBeNull()
-                    title.shouldBe("offer_title_1")
-                    description.shouldBe("offer_description_1")
-                    price.shouldBe(10)
-                    createdAt.shouldBeBefore(Instant.now())
-                    updatedAt.shouldBeBefore(Instant.now())
-                }
-                with(returnedOffers[1]) {
-                    id.shouldNotBeNull()
-                    title.shouldBe("offer_title_2")
-                    description.shouldBe("offer_description_2")
-                    price.shouldBe(20)
-                    createdAt.shouldBeBefore(Instant.now())
-                    updatedAt.shouldBeBefore(Instant.now())
-                }
+                returnedOffers[0].shouldBe(offers[0].toSummaryDTO())
+                returnedOffers[1].shouldBe(offers[1].toSummaryDTO())
             }
 
             it("gets empty list, when there are no offers") {
@@ -88,21 +76,14 @@ class OfferControllerTest : BaseIntegrationTest() {
                         Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
                     )
                 )
-                val offerToUpdate = offers[0]
-                val response = mockMvc.get("/api/offers/${offerToUpdate.id}")
+                val offerToGet = offers[0]
+                val response = mockMvc.get("/api/offers/${offerToGet.id}")
                     .andReturn().response
 
                 val returnedOffer = objectMapper.readValue(response.contentAsString, OfferDetailsDTO::class.java)
 
                 response.status.shouldBe(HttpStatus.OK.value())
-                with(returnedOffer) {
-                    id.shouldBe(offerToUpdate.id)
-                    title.shouldBe("offer_title_1")
-                    description.shouldBe("offer_description_1")
-                    price.shouldBe(10)
-                    createdAt.shouldBe(offerToUpdate.createdAt)
-                    updatedAt.shouldBe(offerToUpdate.updatedAt)
-                }
+                returnedOffer.shouldBe(offerToGet.toDetailsDTO())
             }
 
             it("returns an error, when offer is not found") {
@@ -143,10 +124,10 @@ class OfferControllerTest : BaseIntegrationTest() {
 
                 response.status.shouldBe(HttpStatus.CREATED.value())
                 with(returnedOffer) {
+                    title.shouldBe(requestedOffer.title)
+                    description.shouldBe(requestedOffer.description)
+                    price.shouldBe(requestedOffer.price)
                     id.shouldNotBeNull()
-                    title.shouldBe("offer_request_title_1")
-                    description.shouldBe("offer_request_description_1")
-                    price.shouldBe(10)
                     createdAt.shouldBeBefore(Instant.now())
                     updatedAt.shouldBeBefore(Instant.now())
                 }
@@ -154,14 +135,7 @@ class OfferControllerTest : BaseIntegrationTest() {
                 val offerFromDb = offerRepository.findById(returnedOffer.id)
                     .get()
 
-                with(offerFromDb) {
-                    id.shouldBe(returnedOffer.id)
-                    title.shouldBe("offer_request_title_1")
-                    description.shouldBe("offer_request_description_1")
-                    price.shouldBe(10)
-                    createdAt!!.shouldBeBefore(Instant.now())
-                    updatedAt!!.shouldBeBefore(Instant.now())
-                }
+                returnedOffer.shouldBe(offerFromDb.toDetailsDTO())
             }
 
             describe("Validation") {
@@ -297,7 +271,7 @@ class OfferControllerTest : BaseIntegrationTest() {
                     id.shouldBe(notRemovedOffer.id)
                     title.shouldBe(notRemovedOffer.title)
                     description.shouldBe(notRemovedOffer.description)
-                    price.shouldBe(20)
+                    price.shouldBe(notRemovedOffer.price)
                     createdAt.shouldBe(notRemovedOffer.createdAt)
                     updatedAt.shouldBe(notRemovedOffer.updatedAt)
                 }
