@@ -3,7 +3,7 @@
  * Do not make direct changes to the file.
  */
 
-export interface paths {
+export type paths = {
     "/api/offers/{offerId}": {
         parameters: {
             query?: never;
@@ -38,7 +38,7 @@ export interface paths {
     };
 }
 export type webhooks = Record<string, never>;
-export interface components {
+export type components = {
     schemas: {
         OfferRequestDTO: {
             title: string;
@@ -78,7 +78,7 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
-export interface operations {
+export type operations = {
     getOfferById: {
         parameters: {
             query?: never;
@@ -96,7 +96,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["OfferDetailsDTO"];
+                    "application/json": components["schemas"]["OfferDetailsDTO"];
                 };
             };
         };
@@ -122,7 +122,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["OfferDetailsDTO"];
+                    "application/json": components["schemas"]["OfferDetailsDTO"];
                 };
             };
         };
@@ -162,7 +162,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["OfferSummaryDTO"][];
+                    "application/json": Array<components["schemas"]["OfferSummaryDTO"]>;
                 };
             };
         };
@@ -186,7 +186,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["OfferDetailsDTO"];
+                   "application/json": components["schemas"]["OfferDetailsDTO"];
                 };
             };
         };

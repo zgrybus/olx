@@ -10,7 +10,9 @@
     "lint": "eslint",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix",
-    "generate:api": "npx openapi-typescript ./src/apis/olx/api.json -o ./src/apis/olx/generated/types.d.ts"
+    "api:generate:client": "openapi-typescript ./src/apis/olx/api.json -o ./src/apis/olx/generated/client.d.ts",
+    "api:generate:mocks": "openapi-msw ./src/apis/olx/api.json --output ./src/apis/olx/generated/msw.d.ts",
+    "api:generate": "npm run api:generate:client && npm run api:generate:mocks"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
@@ -42,6 +44,8 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^27.0.0",
+    "msw": "^2.12.1",
+    "openapi-msw": "^2.0.0",
     "openapi-typescript": "^7.10.1",
     "prettier": "^3.5.3",
     "typescript": "^5.7.2",
