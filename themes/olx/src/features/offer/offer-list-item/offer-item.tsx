@@ -1,3 +1,4 @@
+import type { OfferSummary } from '../types';
 import { dateTimeFormatUtil } from '@/features/date-utils/date-time-format-util';
 import { priceFormatUtil } from '@/features/number-utils/number-format-util';
 
@@ -7,21 +8,15 @@ const dateTimeFormat = dateTimeFormatUtil({
   year: 'numeric',
 });
 
-type OfferItemProps = {
-  title: string;
-  price: number;
-  createdAt: string;
-  updatedAt: string;
-  description: string;
-};
+type OfferListItemProps = OfferSummary;
 
-export function OfferItem({
+export function OfferListItem({
   title,
   price,
   updatedAt,
   createdAt,
   description,
-}: OfferItemProps) {
+}: OfferListItemProps) {
   return (
     <li className="bg-white p-2 h-[120px] shadow-sm flex flex-col justify-between font-normal md:h-40">
       <div className="flex justify-between gap-3">
