@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OffersIndexRouteImport } from './routes/offers/index'
+import { Route as OffersOfferIdIndexRouteImport } from './routes/offers/$offerId/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const OffersIndexRoute = OffersIndexRouteImport.update({
   path: '/offers/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OffersOfferIdIndexRoute = OffersOfferIdIndexRouteImport.update({
+  id: '/offers/$offerId/',
+  path: '/offers/$offerId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/offers': typeof OffersIndexRoute
+  '/offers/$offerId': typeof OffersOfferIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/offers': typeof OffersIndexRoute
+  '/offers/$offerId': typeof OffersOfferIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/offers/': typeof OffersIndexRoute
+  '/offers/$offerId/': typeof OffersOfferIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/offers'
+  fullPaths: '/' | '/offers' | '/offers/$offerId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/offers'
-  id: '__root__' | '/' | '/offers/'
+  to: '/' | '/offers' | '/offers/$offerId'
+  id: '__root__' | '/' | '/offers/' | '/offers/$offerId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OffersIndexRoute: typeof OffersIndexRoute
+  OffersOfferIdIndexRoute: typeof OffersOfferIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OffersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/offers/$offerId/': {
+      id: '/offers/$offerId/'
+      path: '/offers/$offerId'
+      fullPath: '/offers/$offerId'
+      preLoaderRoute: typeof OffersOfferIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OffersIndexRoute: OffersIndexRoute,
+  OffersOfferIdIndexRoute: OffersOfferIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
