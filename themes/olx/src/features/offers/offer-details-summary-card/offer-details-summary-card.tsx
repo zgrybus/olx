@@ -21,7 +21,10 @@ export const OfferDetailsSummaryCard = ({
 }: OfferDetailsSummaryCardProps) => {
   return (
     <Card>
-      <CardContent className="space-y-4">
+      <CardContent
+        className="space-y-4"
+        data-testid="offer-details-summary-card"
+      >
         <div>
           {createdAt && (
             <span className="text-xs text-neutral-500">

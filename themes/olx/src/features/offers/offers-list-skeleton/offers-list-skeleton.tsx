@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export function OffersListSkeleton() {
   return (
-    <div>
+    <div data-testid="offers-list-skeleton">
       <Skeleton className="h-7 w-48 rounded-md" />
       <ul className="flex flex-col gap-4 mt-8">
         {Array.from({ length: 5 }).map((_, index) => (

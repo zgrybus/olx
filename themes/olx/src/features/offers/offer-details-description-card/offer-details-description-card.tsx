@@ -17,7 +17,7 @@ export const OfferDetailsDescriptionCard = ({
   description,
 }: OfferDetailsDescriptionCardProps) => {
   return (
-    <Card>
+    <Card data-testid="offer-details-description-card">
       <CardHeader>
         <CardTitle className="uppercase text-xl font-bold text-neutral-800">
           Description
