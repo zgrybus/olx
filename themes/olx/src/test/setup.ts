@@ -12,3 +12,8 @@ afterEach(() => {
 });
 
 afterAll(() => mswServer.close());
+
+vi.mock(
+  import('@/features/match-media-utils/use-match-media/use-match-media'),
+  { spy: true },
+);
