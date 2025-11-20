@@ -19,6 +19,7 @@ function OfferItemDetails() {
     'get',
     '/api/offers/{offerId}',
     { params: { path: { offerId } } },
+    { enabled: !!offerId },
   );
 
   return (

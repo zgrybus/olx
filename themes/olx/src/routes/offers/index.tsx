@@ -4,10 +4,10 @@ import { OfferListItem } from '@/features/offers/offer-list-item/offer-list-item
 import { OffersListSkeleton } from '@/features/offers/offers-list-skeleton/offers-list-skeleton';
 
 export const Route = createFileRoute('/offers/')({
-  component: Offers,
+  component: OffersPage,
 });
 
-function Offers() {
+function OffersPage() {
   const { data: offers = [], isPending } = $olxApi.useQuery(
     'get',
     '/api/offers',
@@ -25,7 +25,7 @@ function Offers() {
                 We found {offers.length} offers
               </h2>
             </div>
-            <ul className="flex flex-col gap-3 mt-8">
+            <ul className="flex flex-col gap-3 mt-8" aria-label="offers list">
               {offers.map((offer) => (
                 <OfferListItem key={offer.id} {...offer} />
               ))}

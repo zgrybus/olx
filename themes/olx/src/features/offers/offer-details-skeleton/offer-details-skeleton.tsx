@@ -9,7 +9,10 @@ import { Separator } from '@/components/ui/separator';
 
 export function OfferDetailsSkeleton() {
   return (
-    <div className="flex flex-col gap-3 md:flex-row mt-6">
+    <div
+      className="flex flex-col gap-3 md:flex-row mt-6"
+      data-testid="offer-details-skeleton"
+    >
       <div className="md:w-1/3 md:order-2">
         <Card>
           <CardContent className="space-y-4">
