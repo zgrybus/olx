@@ -1,4 +1,4 @@
-import { Slot } from '@radix-ui/react-slot';
+import { Slot, Slottable } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
 import { Spinner } from './spinner';
 import type { VariantProps } from 'class-variance-authority';
@@ -44,7 +44,7 @@ function Button({
   size,
   asChild = false,
   children,
-  loading,
+  loading = false,
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
@@ -59,16 +59,8 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      <>
-        {loading && <Spinner size={size} className="absolute" />}
-        <div
-          className={cn({
-            'opacity-0': loading,
-          })}
-        >
-          {children}
-        </div>
-      </>
+      {loading && <Spinner size={size} className="absolute" />}
+      <Slottable>{children}</Slottable>
     </Comp>
   );
 }

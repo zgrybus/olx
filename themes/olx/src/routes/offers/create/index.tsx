@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useForm } from '@tanstack/react-form';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import z from 'zod';
+import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Field,
@@ -26,15 +27,28 @@ const createOfferSchema = z.object({
     .string()
     .min(40, 'The description is too short. Please add more details.')
     .max(9000, `The description is too long. Don't add so much detail.`),
-  price: z.coerce
-    .number()
-    .min(0, 'Incorrect price, the price should be in the format: 1234567.50'),
+  price: z
+    .string()
+    .min(1, 'Price must be greater than 0')
+    .refine(
+      (val) => !Number.isNaN(Number(val)),
+      'Incorrect price, the price should be in the format: 1234567.50',
+    )
+    .transform((val) => Number(val))
+    .refine((val) => val > 0, 'Price must be greater than 0'),
 });
 
 function CreateOfferPage() {
+  const navigate = useNavigate();
   const { mutate: createOfferMutate } = $olxApi.useMutation(
     'post',
     '/api/offers',
+    {
+      onSuccess: () => {
+        toast.success('Your offer is now live and visible to others.');
+        navigate({ to: '/offers' });
+      },
+    },
   );
 
   const form = useForm({
@@ -43,11 +57,17 @@ function CreateOfferPage() {
       description: '',
       price: '',
     },
+    validationLogic: revalidateLogic(),
     validators: {
-      onChange: createOfferSchema,
+      onDynamic: createOfferSchema,
     },
     onSubmit: (data) => {
-      createOfferMutate({ body: data.value });
+      createOfferMutate({
+        body: {
+          ...data.value,
+          price: parseFloat(data.value.price),
+        },
+      });
     },
   });
 
@@ -88,11 +108,9 @@ function CreateOfferPage() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     <FieldError errors={field.state.meta.errors} />
-                    <FieldDescription>
-                      <div className="flex justify-between gap-2">
-                        <span>Please enter at least 16 characters</span>
-                        <span>{field.state.value.length}/70</span>
-                      </div>
+                    <FieldDescription className="flex justify-between gap-2">
+                      <span>Please enter at least 16 characters</span>
+                      <span>{field.state.value.length}/70</span>
                     </FieldDescription>
                   </Field>
                 )}
@@ -120,11 +138,9 @@ function CreateOfferPage() {
                       aria-invalid={field.state.meta.errors.length > 0}
                     />
                     <FieldError errors={field.state.meta.errors} />
-                    <FieldDescription>
-                      <div className="flex justify-between gap-2">
-                        <span>Please enter at least 40 characters</span>
-                        <span>{field.state.value.length}/9000</span>
-                      </div>
+                    <FieldDescription className="flex justify-between gap-2">
+                      <span>Please enter at least 40 characters</span>
+                      <span>{field.state.value.length}/9000</span>
                     </FieldDescription>
                   </Field>
                 )}
