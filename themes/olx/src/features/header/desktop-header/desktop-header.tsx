@@ -18,7 +18,7 @@ export function DesktopHeader() {
             size="default"
             className="bg-white text-slate-950 hover:bg-slate-200 font-bold"
           >
-            <Link to="/offers">
+            <Link to="/offers/create">
               <Plus />
               Add offer
             </Link>

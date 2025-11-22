@@ -12,7 +12,7 @@ export function MobileNav() {
         <Link to="/" className="group block flex-1">
           <MobileMenuNavItem icon={Search} label="Search" />
         </Link>
-        <Link to="/offers" className="group block flex-1">
+        <Link to="/offers/create" className="group block flex-1">
           <MobileMenuNavItem icon={CirclePlus} label="Add offer" />
         </Link>
       </div>
