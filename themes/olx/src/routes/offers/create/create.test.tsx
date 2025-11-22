@@ -21,18 +21,26 @@ describe('Offers Page', () => {
   });
 
   test('creates an offer and redirects to offers page', async () => {
+    const title = 'IKEA Friheten Corner Sofa Be';
+    const description =
+      'Dark gray corner sofa bed from IKEA (Friheten model). It converts easily into a double bed and has large storage space underneath.';
+    const price = 250;
+
     const user = userEvent.setup();
     const { router } = await renderApp({ to: '/offers/create' });
 
     await user.type(
       screen.getByRole('textbox', { name: 'Title of the offer' }),
-      'IKEA Friheten Corner Sofa Be',
+      title,
     );
     await user.type(
       screen.getByRole('textbox', { name: 'Description' }),
-      'Dark gray corner sofa bed from IKEA (Friheten model). It converts easily into a double bed and has large storage space underneath.',
+      description,
     );
-    await user.type(screen.getByRole('spinbutton', { name: 'Price' }), '250');
+    await user.type(
+      screen.getByRole('spinbutton', { name: 'Price' }),
+      `${price}`,
+    );
 
     expect(createOfferMsw).toHaveLength(0);
     expect(router.state.location.href).toBe('/offers/create');
@@ -40,12 +48,16 @@ describe('Offers Page', () => {
     await user.click(screen.getByRole('button', { name: 'Add Offer' }));
 
     expect(
-      await screen.findByRole('listitem', {
-        name: /Your offer is now live and visible to others/i,
-      }),
+      await screen.findByText(/Your offer is now live and visible to others/i),
     ).toBeVisible();
+
     expect(createOfferMsw).toHaveLength(1);
-    expect(createOfferMsw[0].body).toEqual({ dsd: 'ds' });
+    expect(await createOfferMsw[0].json()).toEqual({
+      title,
+      description,
+      price,
+    });
+
     expect(router.state.location.href).toBe('/offers');
   });
 });
