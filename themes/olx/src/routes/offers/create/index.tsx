@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import z from 'zod';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Field,
@@ -38,13 +39,17 @@ const createOfferSchema = z.object({
     .refine((val) => val > 0, 'Price must be greater than 0'),
 });
 
-function CreateOfferPage() {
+export function CreateOfferPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { mutate: createOfferMutate } = $olxApi.useMutation(
     'post',
     '/api/offers',
     {
       onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [$olxApi.queryOptions('get', '/api/offers').queryKey],
+        });
         toast.success('Your offer is now live and visible to others.');
         navigate({ to: '/offers' });
       },
