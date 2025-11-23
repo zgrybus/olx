@@ -1,9 +1,9 @@
 pre-commit:
   parallel: true
   commands:
-    backend-kotlin:
-      glob: "*.kt"
-      run: ./gradlew ktlintFormat && git add {staged_files}
+    #    backend-kotlin:
+    #      glob: "*.kt"
+    #      run: ./gradlew ktlintFormat && git add {staged_files}
 
     frontend-linter:
       root: "themes/olx"

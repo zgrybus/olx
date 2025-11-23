@@ -57,6 +57,7 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
+    jvmToolchain(21)
 }
 
 allOpen {
