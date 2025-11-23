@@ -14,7 +14,7 @@ function OffersPage() {
   );
 
   return (
-    <main className="py-5 px-2">
+    <main className="min-h-screen py-6 px-42">
       <div className="max-w-[1200px] mx-auto">
         {isPending ? (
           <OffersListSkeleton />

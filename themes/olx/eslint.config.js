@@ -17,6 +17,7 @@ export default defineConfig([
   {
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+      'react/no-children-prop': ['off'],
     },
   },
 

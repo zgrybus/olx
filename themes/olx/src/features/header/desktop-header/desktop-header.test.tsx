@@ -23,7 +23,7 @@ describe('Desktop Header', () => {
 
       await user.click(screen.getByRole('link', { name: 'Add offer' }));
 
-      expect(router.state.location.href).toBe('/offers');
+      expect(router.state.location.href).toBe('/offers/create');
     });
   });
 });

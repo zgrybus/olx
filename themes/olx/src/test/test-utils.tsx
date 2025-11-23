@@ -4,12 +4,13 @@ import {
   RouterProvider,
   createMemoryHistory,
   createRootRoute,
+  createRoute,
   createRouter,
   defaultStringifySearch,
   interpolatePath,
 } from '@tanstack/react-router';
 import { act } from 'react';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import type {
   RegisteredRouter,
   ValidateNavigateOptions,
@@ -42,17 +43,6 @@ const createTestQueryClient = () =>
     },
   });
 
-function createTestRouter(component: ReactNode) {
-  const rootRoute = createRootRoute({
-    component: () => <>{component}</>,
-  });
-
-  return createRouter({
-    routeTree: rootRoute,
-    history: createMemoryHistory(),
-  });
-}
-
 type TestProvidersProps = {
   children: ReactNode;
   queryClient?: QueryClient;
@@ -71,33 +61,55 @@ type RenderWithProvidersOptions = {
   queryClient: QueryClient;
 };
 
-export function renderComponentWithProviders(
-  ui: ReactNode,
+export async function renderComponentWithRouterAndProviders<
+  TOptions,
+  TRouter extends RegisteredRouter = RegisteredRouter,
+>(
+  ui: ReactElement,
+  navigate?: ValidateNavigateOptions<TRouter, TOptions>,
   options?: RenderWithProvidersOptions,
 ) {
-  const testQueryClient = options?.queryClient ?? createTestQueryClient();
-  const router = createTestRouter(ui);
+  const rootRoute = createRootRoute({});
+  const queryClient = options?.queryClient ?? createTestQueryClient();
 
-  const { rerender, ...result } = render(
-    <TestProviders queryClient={testQueryClient}>
-      <RouterProvider router={router} />
-    </TestProviders>,
-  );
+  rootRoute.addChildren([
+    createRoute({
+      path: navigate?.to ?? ('/' as string),
+      getParentRoute: () => rootRoute,
+      component: () => ui,
+      notFoundComponent: () => <div>Not Found</div>,
+    }),
+  ]);
 
-  return {
-    ...result,
-    router,
-    rerender: (rerenderUi: ReactNode) => {
-      const newRouter = createTestRouter(rerenderUi);
-      rerender(
-        <TestProviders queryClient={testQueryClient}>
-          <RouterProvider router={newRouter} />
-        </TestProviders>,
-      );
+  const router = createRouter({
+    routeTree: rootRoute,
+    history: createMemoryHistory({
+      initialEntries: ['/'],
+    }),
+    context: {
+      queryClient,
     },
-  };
-}
+  });
 
+  router.navigate({ to: '/' });
+
+  const res = render(<RouterProvider router={router} />, {
+    wrapper: (props) => (
+      <TestProviders queryClient={queryClient}>{props.children}</TestProviders>
+    ),
+  });
+
+  const rerender = async () => {
+    res.rerender(<RouterProvider router={router} />);
+    await act(async () => {});
+  };
+
+  return await act(async () => ({
+    ...res,
+    router,
+    rerender,
+  }));
+}
 type RenderAppOptions = {
   queryClient?: QueryClient;
 };
