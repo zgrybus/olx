@@ -70,7 +70,7 @@ describe('Offers Page', () => {
     });
 
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: [['get', '/api/offers']],
+      queryKey: ['get', '/api/offers'],
     });
     expect(router.state.location.href).toBe('/offers');
   });

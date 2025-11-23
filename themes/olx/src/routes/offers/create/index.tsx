@@ -47,9 +47,10 @@ export function CreateOfferPage() {
     '/api/offers',
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: [$olxApi.queryOptions('get', '/api/offers').queryKey],
-        });
+        // https://github.com/openapi-ts/openapi-typescript/issues/1806
+        const queryKey = $olxApi.queryOptions('get', '/api/offers')
+          .queryKey as ['get', '/api/offers'];
+        queryClient.invalidateQueries({ queryKey });
         toast.success('Your offer is now live and visible to others.');
         navigate({ to: '/offers' });
       },
