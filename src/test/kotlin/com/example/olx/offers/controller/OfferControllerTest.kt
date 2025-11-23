@@ -30,6 +30,9 @@ class OfferControllerTest : BaseIntegrationTest() {
     lateinit var offerRepository: OfferRepository
 
     init {
+        fun getText(len: Int): String {
+            return "0".repeat(len)
+        }
         beforeEach {
             offerRepository.deleteAll()
         }
@@ -109,8 +112,8 @@ class OfferControllerTest : BaseIntegrationTest() {
             it("adds new offer") {
                 val requestedOffer =
                     OfferRequestDTO(
-                        title = "offer_request_title_1",
-                        description = "offer_request_description_1",
+                        title = getText(15),
+                        description = getText(40),
                         price = 10
                     )
 
@@ -139,62 +142,171 @@ class OfferControllerTest : BaseIntegrationTest() {
             }
 
             describe("Validation") {
-                it("gets an error, when title is not set") {
-                    val requestedOffer =
-                        OfferRequestDTO(title = null, description = "offer_request_description_1", price = 10)
 
-                    val response = mockMvc.post("/api/offers") {
-                        contentType = MediaType.APPLICATION_JSON
-                        content = objectMapper.writeValueAsString(requestedOffer)
-                    }
-                        .andReturn().response
+                describe("Title") {
+                    it("gets an error, when title is not set") {
+                        val requestedOffer =
+                            OfferRequestDTO(title = null, description = getText(40), price = 10)
 
-                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
 
-                    val expectedError = ErrorResponse(
-                        status = HttpStatus.BAD_REQUEST.value(),
-                        path = "uri=/api/offers",
-                        errors = listOf(
-                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                            )
                         )
-                    )
 
-                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                    returnedError.shouldBe(expectedError)
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("gets an error, when title is too short (< 15 chars)") {
+                        val requestedOffer =
+                            OfferRequestDTO(title = getText(14), description = getText(40), price = 10)
+
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The title is too short. Please write at least 14 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("gets an error, when title is too long (> 70 chars)") {
+                        val requestedOffer =
+                            OfferRequestDTO(title = getText(71), description = getText(40), price = 10)
+
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The title is too long. Limit is 70 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
                 }
 
-                it("gets an error, when description is not set") {
-                    val requestedOffer =
-                        OfferRequestDTO(title = "offer_request_title_1", description = null, price = 10)
+                describe("Description") {
+                    it("gets an error, when description is not set") {
+                        val requestedOffer =
+                            OfferRequestDTO(title = getText(15), description = null, price = 10)
 
-                    val response = mockMvc.post("/api/offers") {
-                        contentType = MediaType.APPLICATION_JSON
-                        content = objectMapper.writeValueAsString(requestedOffer)
-                    }
-                        .andReturn().response
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
 
-                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
 
-                    val expectedError = ErrorResponse(
-                        status = HttpStatus.BAD_REQUEST.value(),
-                        path = "uri=/api/offers",
-                        errors = listOf(
-                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
+                            )
                         )
-                    )
 
-                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                    returnedError.shouldBe(expectedError)
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("gets an error, when description is too short (< 40 chars)") {
+                        val requestedOffer =
+                            OfferRequestDTO(title = getText(15), description = getText(39), price = 10)
+
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The description is too short. Please write at least 40 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("gets an error, when description is too long (> 9000 chars)") {
+                        val requestedOffer =
+                            OfferRequestDTO(title = getText(15), description = getText(9001), price = 10)
+
+                        val response = mockMvc.post("/api/offers") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(requestedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The description is too long. Limit is 9000 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
                 }
 
                 describe("Price") {
                     it("gets an error, when price is not set") {
                         val requestedOffer =
-                            OfferRequestDTO(
-                                title = "offer_request_title_1",
-                                description = "offer_request_description_1",
-                                price = null
-                            )
+                            OfferRequestDTO(title = getText(15), description = getText(40), price = null)
 
                         val response = mockMvc.post("/api/offers") {
                             contentType = MediaType.APPLICATION_JSON
@@ -218,11 +330,7 @@ class OfferControllerTest : BaseIntegrationTest() {
 
                     it("gets an error, when price is lower than 0") {
                         val requestedOffer =
-                            OfferRequestDTO(
-                                title = "offer_request_title_1",
-                                description = "offer_request_description_1",
-                                price = -1
-                            )
+                            OfferRequestDTO(title = getText(15), description = getText(40), price = -1)
 
                         val response = mockMvc.post("/api/offers") {
                             contentType = MediaType.APPLICATION_JSON
@@ -300,13 +408,17 @@ class OfferControllerTest : BaseIntegrationTest() {
             it("updates offer by id") {
                 val offers = offerRepository.saveAll(
                     listOf(
-                        Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
-                        Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                        Offer(title = "${getText(15)}_title_1", description = "${getText(40)}_desc_1", price = 10),
+                        Offer(title = "${getText(15)}_title_2", description = "${getText(40)}_desc_2", price = 20)
                     )
                 )
                 val offerToUpdate = offers[0]
                 val updatedOffer =
-                    OfferRequestDTO(title = "updated_title_1", description = "updated_description_1", price = 30)
+                    OfferRequestDTO(
+                        title = "${getText(15)}_updated_title_1",
+                        description = "${getText(40)}_updated_desc_2",
+                        price = 30
+                    )
 
                 val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
                     contentType = MediaType.APPLICATION_JSON
@@ -360,80 +472,304 @@ class OfferControllerTest : BaseIntegrationTest() {
             }
 
             describe("Validation") {
-                it("returns an error, when title is not set") {
-                    val offers = offerRepository.saveAll(
-                        listOf(
-                            Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
-                            Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
-                        )
-                    )
-                    val offerToUpdate = offers[0]
-                    val updatedOffer = OfferRequestDTO(title = null, description = "updated_description_1", price = 30)
 
-                    val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
-                        contentType = MediaType.APPLICATION_JSON
-                        content = objectMapper.writeValueAsString(updatedOffer)
+                describe("Title") {
+                    it("returns an error, when title is not set") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
+                            )
+                        )
+                        val offerToUpdate = offers[0]
+                        val updatedOffer =
+                            OfferRequestDTO(
+                                title = null,
+                                description = "${getText(40)}_updated_desc_2",
+                                price = 30
+                            )
+
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
                     }
-                        .andReturn().response
 
-                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
-
-                    val expectedError = ErrorResponse(
-                        status = HttpStatus.BAD_REQUEST.value(),
-                        path = "uri=/api/offers/${offerToUpdate.id}",
-                        errors = listOf(
-                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Title is required")
+                    it("returns an error, when title is too short (< 15 chars)") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
+                            )
                         )
-                    )
+                        val offerToUpdate = offers[0]
+                        val updatedOffer =
+                            OfferRequestDTO(
+                                title = getText(14),
+                                description = "${getText(40)}_updated_desc_2",
+                                price = 30
+                            )
 
-                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                    returnedError.shouldBe(expectedError)
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The title is too short. Please write at least 14 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("returns an error, when title is too long (> 70 chars)") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
+                            )
+                        )
+                        val offerToUpdate = offers[0]
+                        val updatedOffer =
+                            OfferRequestDTO(
+                                title = getText(71),
+                                description = "${getText(40)}_updated_desc_2",
+                                price = 30
+                            )
+
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The title is too long. Limit is 70 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
                 }
 
-                it("returns an error, when description is not set") {
-                    val offers = offerRepository.saveAll(
-                        listOf(
-                            Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
-                            Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                describe("Description") {
+                    it("returns an error, when description is not set") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
+                            )
                         )
-                    )
-                    val offerToUpdate = offers[0]
-                    val updatedOffer = OfferRequestDTO(title = "updated_title_1", description = null, price = 30)
+                        val offerToUpdate = offers[0]
+                        val updatedOffer =
+                            OfferRequestDTO(
+                                title = "${getText(15)}_title_1",
+                                description = null,
+                                price = 30
+                            )
 
-                    val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
-                        contentType = MediaType.APPLICATION_JSON
-                        content = objectMapper.writeValueAsString(updatedOffer)
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
                     }
-                        .andReturn().response
 
-                    val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
-
-                    val expectedError = ErrorResponse(
-                        status = HttpStatus.BAD_REQUEST.value(),
-                        path = "uri=/api/offers/${offerToUpdate.id}",
-                        errors = listOf(
-                            ErrorDTO(type = ErrorType.NOT_VALID, message = "Description is required")
+                    it("returns an error, when description is too short (< 40 chars)") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
+                            )
                         )
-                    )
+                        val offerToUpdate = offers[0]
+                        val updatedOffer =
+                            OfferRequestDTO(
+                                title = "${getText(15)}_title_1",
+                                description = getText(39),
+                                price = 30
+                            )
 
-                    response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
-                    returnedError.shouldBe(expectedError)
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The description is too short. Please write at least 40 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
+
+                    it("returns an error, when description is too long (> 9000 chars)") {
+                        val offers = offerRepository.saveAll(
+                            listOf(
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
+                            )
+                        )
+                        val offerToUpdate = offers[0]
+                        val updatedOffer =
+                            OfferRequestDTO(
+                                title = "${getText(15)}_title_1",
+                                description = getText(9001),
+                                price = 30
+                            )
+
+                        val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(updatedOffer)
+                        }
+                            .andReturn().response
+
+                        val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                        val expectedError = ErrorResponse(
+                            status = HttpStatus.BAD_REQUEST.value(),
+                            path = "uri=/api/offers/${offerToUpdate.id}",
+                            errors = listOf(
+                                ErrorDTO(
+                                    type = ErrorType.NOT_VALID,
+                                    message = "The description is too long. Limit is 9000 characters."
+                                )
+                            )
+                        )
+
+                        response.status.shouldBe(HttpStatus.BAD_REQUEST.value())
+                        returnedError.shouldBe(expectedError)
+                    }
                 }
 
                 describe("Price") {
                     it("returns an error, when price is not set") {
                         val offers = offerRepository.saveAll(
                             listOf(
-                                Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
-                                Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
                             )
                         )
                         val offerToUpdate = offers[0]
-                        val updatedOffer = OfferRequestDTO(
-                            title = "updated_title_1",
-                            description = "updated_description_1",
-                            price = null
-                        )
+                        val updatedOffer =
+                            OfferRequestDTO(
+                                title = "${getText(15)}_title_1",
+                                description = "${getText(40)}_description_1",
+                                price = null
+                            )
 
                         val response = mockMvc.put("/api/offers/${offerToUpdate.id}") {
                             contentType = MediaType.APPLICATION_JSON
@@ -458,14 +794,22 @@ class OfferControllerTest : BaseIntegrationTest() {
                     it("returns an error, when price is lower than 0") {
                         val offers = offerRepository.saveAll(
                             listOf(
-                                Offer(title = "offer_title_1", description = "offer_description_1", price = 10),
-                                Offer(title = "offer_title_2", description = "offer_description_2", price = 20)
+                                Offer(
+                                    title = "${getText(15)}_title_1",
+                                    description = "${getText(40)}_desc_1",
+                                    price = 10
+                                ),
+                                Offer(
+                                    title = "${getText(15)}_title_2",
+                                    description = "${getText(40)}_desc_2",
+                                    price = 20
+                                )
                             )
                         )
                         val offerToUpdate = offers[0]
                         val updatedOffer = OfferRequestDTO(
-                            title = "updated_title_1",
-                            description = "updated_description_1",
+                            title = "${getText(15)}_title_1",
+                            description = "${getText(40)}_description_1",
                             price = -1
                         )
 
