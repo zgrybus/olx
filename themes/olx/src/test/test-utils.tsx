@@ -104,11 +104,14 @@ export async function renderComponentWithRouterAndProviders<
     await act(async () => {});
   };
 
-  return await act(async () => ({
-    ...res,
-    router,
-    rerender,
-  }));
+  return await act(
+    async () =>
+      await {
+        ...res,
+        router,
+        rerender,
+      },
+  );
 }
 type RenderAppOptions = {
   queryClient?: QueryClient;

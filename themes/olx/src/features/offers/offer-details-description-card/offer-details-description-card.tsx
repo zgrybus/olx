@@ -19,12 +19,16 @@ export const OfferDetailsDescriptionCard = ({
   return (
     <Card data-testid="offer-details-description-card">
       <CardHeader>
-        <CardTitle className="uppercase text-xl font-bold text-neutral-800">
+        <CardTitle className="text-xl font-bold text-neutral-800 uppercase">
           Description
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-neutral-800 leading-relaxed whitespace-pre-wrap text-base">
+        <div
+          className={`
+            text-base leading-relaxed whitespace-pre-wrap text-neutral-800
+          `}
+        >
           {description}
         </div>
       </CardContent>

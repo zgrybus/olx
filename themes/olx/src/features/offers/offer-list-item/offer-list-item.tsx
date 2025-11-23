@@ -30,33 +30,70 @@ export function OfferListItem({
       >
         <Card
           className={cn(
-            'flex flex-col justify-between h-[120px] md:h-40',
+            `
+              flex h-[120px] flex-col justify-between
+              md:h-40
+            `,
             'transition-all duration-200 ease-in-out',
-            'hover:bg-neutral-50 hover:shadow-md border-neutral-200/60',
+            `
+              border-neutral-200/60
+              hover:bg-neutral-50 hover:shadow-md
+            `,
             'cursor-pointer',
           )}
         >
-          <CardContent className="flex flex-col h-full gap-2">
-            <div className="flex justify-between gap-3 items-start">
-              <h3 className="text-base font-medium leading-tight line-clamp-2 text-neutral-900 group-hover:underline min-w-0">
+          <CardContent className="flex h-full flex-col gap-2">
+            <div className="flex items-start justify-between gap-3">
+              <h3
+                className={`
+                  line-clamp-2 min-w-0 text-base leading-tight font-medium
+                  text-neutral-900
+                  group-hover:underline
+                `}
+              >
                 {title}
               </h3>
-              <p className="text-base font-bold whitespace-nowrap shrink-0 text-neutral-900">
+              <p
+                className={`
+                  shrink-0 text-base font-bold whitespace-nowrap
+                  text-neutral-900
+                `}
+              >
                 {priceFormatUtil.format(price)}
               </p>
             </div>
-            <div className="hidden md:block flex-1 overflow-hidden">
-              <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+            <div
+              className={`
+                hidden flex-1 overflow-hidden
+                md:block
+              `}
+            >
+              <p
+                className={`
+                  line-clamp-2 text-sm leading-relaxed text-muted-foreground
+                `}
+              >
                 {description}
               </p>
             </div>
           </CardContent>
-          <CardFooter className="pt-0 mt-auto text-xs text-muted-foreground flex flex-col items-start gap-0.5 md:flex-row md:gap-4">
+          <CardFooter
+            className={`
+              mt-auto flex flex-col items-start gap-0.5 pt-0 text-xs
+              text-muted-foreground
+              md:flex-row md:gap-4
+            `}
+          >
             <p>
               <span className="font-medium">Updated:</span>{' '}
               {dateTimeFormat.format(new Date(updatedAt))}
             </p>
-            <p className="hidden md:block">
+            <p
+              className={`
+                hidden
+                md:block
+              `}
+            >
               <span className="font-medium">Created:</span>{' '}
               {dateTimeFormat.format(new Date(createdAt))}
             </p>

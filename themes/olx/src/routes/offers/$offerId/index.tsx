@@ -24,13 +24,16 @@ function OfferItemDetails() {
   );
 
   return (
-    <main className="min-h-screen py-6 px-4">
-      <div className="max-w-[1200px] mx-auto">
+    <main className="min-h-screen px-4 py-6">
+      <div className="mx-auto max-w-[1200px]">
         <div className="flex justify-between">
           <Button
             variant="ghost"
             asChild
-            className="hover:bg-transparent hover:text-neutral-600 text-neutral-800"
+            className={`
+              text-neutral-800
+              hover:bg-transparent hover:text-neutral-600
+            `}
           >
             <Link to="/offers">
               <ChevronLeft className="h-4 w-4" />
@@ -42,8 +45,13 @@ function OfferItemDetails() {
         {isPending ? (
           <OfferDetailsSkeleton />
         ) : (
-          <div className="flex flex-col gap-3 md:flex-row mt-6">
-            <div className="md:w-1/3 md:order-2">
+          <div
+            className={`
+              mt-6 flex flex-col gap-3
+              md:flex-row
+            `}
+          >
+            <div className="md:order-2 md:w-1/3">
               <OfferDetailsSummaryCard
                 title={offer?.title}
                 createdAt={offer?.createdAt}

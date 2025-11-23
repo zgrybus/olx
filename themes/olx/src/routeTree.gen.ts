@@ -8,97 +8,97 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as OffersIndexRouteImport } from './routes/offers/index'
-import { Route as OffersCreateIndexRouteImport } from './routes/offers/create/index'
-import { Route as OffersOfferIdIndexRouteImport } from './routes/offers/$offerId/index'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as IndexRouteImport } from './routes/index';
+import { Route as OffersIndexRouteImport } from './routes/offers/index';
+import { Route as OffersCreateIndexRouteImport } from './routes/offers/create/index';
+import { Route as OffersOfferIdIndexRouteImport } from './routes/offers/$offerId/index';
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const OffersIndexRoute = OffersIndexRouteImport.update({
   id: '/offers/',
   path: '/offers/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const OffersCreateIndexRoute = OffersCreateIndexRouteImport.update({
   id: '/offers/create/',
   path: '/offers/create/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const OffersOfferIdIndexRoute = OffersOfferIdIndexRouteImport.update({
   id: '/offers/$offerId/',
   path: '/offers/$offerId/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/offers': typeof OffersIndexRoute
-  '/offers/$offerId': typeof OffersOfferIdIndexRoute
-  '/offers/create': typeof OffersCreateIndexRoute
+  '/': typeof IndexRoute;
+  '/offers': typeof OffersIndexRoute;
+  '/offers/$offerId': typeof OffersOfferIdIndexRoute;
+  '/offers/create': typeof OffersCreateIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/offers': typeof OffersIndexRoute
-  '/offers/$offerId': typeof OffersOfferIdIndexRoute
-  '/offers/create': typeof OffersCreateIndexRoute
+  '/': typeof IndexRoute;
+  '/offers': typeof OffersIndexRoute;
+  '/offers/$offerId': typeof OffersOfferIdIndexRoute;
+  '/offers/create': typeof OffersCreateIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/offers/': typeof OffersIndexRoute
-  '/offers/$offerId/': typeof OffersOfferIdIndexRoute
-  '/offers/create/': typeof OffersCreateIndexRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/offers/': typeof OffersIndexRoute;
+  '/offers/$offerId/': typeof OffersOfferIdIndexRoute;
+  '/offers/create/': typeof OffersCreateIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/offers' | '/offers/$offerId' | '/offers/create'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/offers' | '/offers/$offerId' | '/offers/create'
-  id: '__root__' | '/' | '/offers/' | '/offers/$offerId/' | '/offers/create/'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/offers' | '/offers/$offerId' | '/offers/create';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/offers' | '/offers/$offerId' | '/offers/create';
+  id: '__root__' | '/' | '/offers/' | '/offers/$offerId/' | '/offers/create/';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  OffersIndexRoute: typeof OffersIndexRoute
-  OffersOfferIdIndexRoute: typeof OffersOfferIdIndexRoute
-  OffersCreateIndexRoute: typeof OffersCreateIndexRoute
+  IndexRoute: typeof IndexRoute;
+  OffersIndexRoute: typeof OffersIndexRoute;
+  OffersOfferIdIndexRoute: typeof OffersOfferIdIndexRoute;
+  OffersCreateIndexRoute: typeof OffersCreateIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/offers/': {
-      id: '/offers/'
-      path: '/offers'
-      fullPath: '/offers'
-      preLoaderRoute: typeof OffersIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/offers/';
+      path: '/offers';
+      fullPath: '/offers';
+      preLoaderRoute: typeof OffersIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/offers/create/': {
-      id: '/offers/create/'
-      path: '/offers/create'
-      fullPath: '/offers/create'
-      preLoaderRoute: typeof OffersCreateIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/offers/create/';
+      path: '/offers/create';
+      fullPath: '/offers/create';
+      preLoaderRoute: typeof OffersCreateIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/offers/$offerId/': {
-      id: '/offers/$offerId/'
-      path: '/offers/$offerId'
-      fullPath: '/offers/$offerId'
-      preLoaderRoute: typeof OffersOfferIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/offers/$offerId/';
+      path: '/offers/$offerId';
+      fullPath: '/offers/$offerId';
+      preLoaderRoute: typeof OffersOfferIdIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -107,7 +107,7 @@ const rootRouteChildren: RootRouteChildren = {
   OffersIndexRoute: OffersIndexRoute,
   OffersOfferIdIndexRoute: OffersOfferIdIndexRoute,
   OffersCreateIndexRoute: OffersCreateIndexRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

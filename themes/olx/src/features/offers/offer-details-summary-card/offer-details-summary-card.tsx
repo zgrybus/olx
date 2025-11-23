@@ -32,7 +32,7 @@ export const OfferDetailsSummaryCard = ({
             </span>
           )}
         </div>
-        <h1 className="text-2xl font-medium text-neutral-900 leading-snug">
+        <h1 className="text-2xl leading-snug font-medium text-neutral-900">
           {title}
         </h1>
         {price && (
