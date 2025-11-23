@@ -78,11 +78,11 @@ export function CreateOfferPage() {
   });
 
   return (
-    <main className="min-h-screen py-6 px-4">
-      <div className="max-w-[1200px] mx-auto">
+    <main className="min-h-screen px-4 py-6">
+      <div className="mx-auto max-w-[1200px]">
         <h2 className="text-2xl font-bold">Add Offer</h2>
         <form
-          className="flex flex-col gap-3 mt-8"
+          className="mt-8 flex flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -91,7 +91,7 @@ export function CreateOfferPage() {
         >
           <Card>
             <CardContent>
-              <h3 className="text-xl font-bold mb-6">
+              <h3 className="mb-6 text-xl font-bold">
                 The more details the better!
               </h3>
               <form.Field
@@ -155,7 +155,7 @@ export function CreateOfferPage() {
           </Card>
           <Card>
             <CardContent>
-              <h3 className="text-xl font-bold mb-6">Details</h3>
+              <h3 className="mb-6 text-xl font-bold">Details</h3>
               <form.Field
                 name="price"
                 children={(field) => (
@@ -181,14 +181,22 @@ export function CreateOfferPage() {
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="flex md:justify-end">
+            <CardContent
+              className={`
+                flex
+                md:justify-end
+              `}
+            >
               <form.Subscribe
                 selector={(state) => [state.isSubmitting]}
                 children={([isSubmitting]) => (
                   <Button
                     type="submit"
                     size="lg"
-                    className="flex-1 md:flex-initial"
+                    className={`
+                      flex-1
+                      md:flex-initial
+                    `}
                     loading={isSubmitting}
                   >
                     Add Offer

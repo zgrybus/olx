@@ -14,8 +14,8 @@ function OffersPage() {
   );
 
   return (
-    <main className="min-h-screen py-6 px-42">
-      <div className="max-w-[1200px] mx-auto">
+    <main className="min-h-screen px-42 py-6">
+      <div className="mx-auto max-w-[1200px]">
         {isPending ? (
           <OffersListSkeleton />
         ) : (
@@ -25,7 +25,7 @@ function OffersPage() {
                 We found {offers.length} offers
               </h2>
             </div>
-            <ul className="flex flex-col gap-3 mt-8" aria-label="offers list">
+            <ul className="mt-8 flex flex-col gap-3" aria-label="offers list">
               {offers.map((offer) => (
                 <OfferListItem key={offer.id} {...offer} />
               ))}
