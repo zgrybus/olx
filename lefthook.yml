@@ -7,5 +7,5 @@ pre-commit:
 
     frontend-linter:
       root: "themes/olx"
-      glob: "*.{js,ts,tsx,jsx,json}"
+      glob: "*.{ts,tsx}"
       run: npx prettier --write {staged_files} && npx eslint --fix {staged_files} && git add {staged_files}
