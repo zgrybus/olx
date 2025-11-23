@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    backend-kotlin:
+      glob: "*.kt"
+      run: ./gradlew ktlintFormat && git add {staged_files}
+
+    frontend-linter:
+      root: "themes/olx"
+      glob: "*.{js,ts,tsx,jsx,json}"
+      run: npx prettier --write {staged_files} && npx eslint --fix {staged_files} && git add {staged_files}
