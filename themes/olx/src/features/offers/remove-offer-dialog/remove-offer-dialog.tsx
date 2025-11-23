@@ -50,7 +50,12 @@ export function RemoveOfferDialog({ offerId }: RemoveOfferDialogProps) {
             offer and remove the data from our servers.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="gap-2 sm:justify-end">
+        <DialogFooter
+          className={`
+            gap-2
+            sm:justify-end
+          `}
+        >
           <DialogClose asChild>
             <Button type="button" variant="secondary">
               Cancel

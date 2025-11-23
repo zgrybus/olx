@@ -6,6 +6,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import tseslint from 'typescript-eslint';
 import vitest from 'eslint-plugin-vitest';
 import testingLibrary from 'eslint-plugin-testing-library';
+import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 
 export default defineConfig([
   ...tseslint.configs.recommended,
@@ -20,7 +21,29 @@ export default defineConfig([
       'react/no-children-prop': ['off'],
     },
   },
-
+  {
+    files: ['**/*.{jsx,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      'better-tailwindcss': eslintPluginBetterTailwindcss,
+    },
+    rules: {
+      ...eslintPluginBetterTailwindcss.configs['recommended-warn'].rules,
+      ...eslintPluginBetterTailwindcss.configs['recommended-error'].rules,
+    },
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/global.css',
+        tailwindConfig: 'tailwind.config.js',
+      },
+    },
+  },
   {
     files: ['src/**/*.{test,spec}.{ts,tsx}'],
     plugins: {
