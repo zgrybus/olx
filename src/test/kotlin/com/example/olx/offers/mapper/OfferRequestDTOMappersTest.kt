@@ -5,8 +5,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
-
-class OfferRequestDTOMappers : DescribeSpec() {
+class OfferRequestDTOMappersTest : DescribeSpec() {
     init {
         describe("toEntity") {
             it("maps from dto to entity") {

@@ -17,16 +17,15 @@ import org.springframework.transaction.annotation.Transactional
 class OfferService(
     val offerRepository: OfferRepository,
 ) : Loggable {
-
     @Transactional(readOnly = true)
     fun getAllOffers(): List<OfferSummaryDTO> {
         logger.info { "Attempting to get all offers" }
 
-        return offerRepository.findAll()
+        return offerRepository
+            .findAll()
             .also {
                 logger.info { "Successfully found ${it.size} offers" }
-            }
-            .let {
+            }.let {
                 it.map { offer ->
                     offer.toSummaryDTO()
                 }
@@ -37,24 +36,24 @@ class OfferService(
     fun getOfferById(offerId: Long): OfferDetailsDTO {
         logger.info { "Attempting to get offer by id $offerId" }
 
-        return offerRepository.findById(offerId)
+        return offerRepository
+            .findById(offerId)
             .orElseThrow { OfferNotFoundException("Offer with $offerId is not found") }
             .also {
                 logger.info { "Successfully found offer with id $offerId" }
-            }
-            .toDetailsDTO()
+            }.toDetailsDTO()
     }
 
     @Transactional
     fun deleteOfferById(offerId: Long) {
         logger.info { "Attempting to delete offer by id $offerId" }
 
-        offerRepository.findById(offerId)
+        offerRepository
+            .findById(offerId)
             .orElseThrow { OfferNotFoundException("Offer with $offerId is not found") }
             .let {
                 offerRepository.delete(it)
-            }
-            .also {
+            }.also {
                 logger.info { "Successfully found offer with id $offerId" }
             }
     }
@@ -63,20 +62,27 @@ class OfferService(
     fun addOffer(offerRequestDTO: OfferRequestDTO): OfferDetailsDTO {
         logger.info { "Attempting to add offer with details: $offerRequestDTO" }
 
-        return offerRepository.save(offerRequestDTO.toEntity())
+        return offerRepository
+            .save(offerRequestDTO.toEntity())
             .also { logger.info { "Successfully added offer: $it" } }
             .toDetailsDTO()
     }
 
     @Transactional
-    fun updateOffer(offerId: Long, offerRequestDTO: OfferRequestDTO): OfferDetailsDTO {
+    fun updateOffer(
+        offerId: Long,
+        offerRequestDTO: OfferRequestDTO,
+    ): OfferDetailsDTO {
         logger.info { "Attempting to update offer by id $offerId" }
 
-        val offerToUpdate = offerRepository.findById(offerId)
-            .orElseThrow { OfferNotFoundException("Offer with $offerId is not found") }
-            .toUpdateWithRequestDto(offerRequestDTO)
+        val offerToUpdate =
+            offerRepository
+                .findById(offerId)
+                .orElseThrow { OfferNotFoundException("Offer with $offerId is not found") }
+                .toUpdateWithRequestDto(offerRequestDTO)
 
-        return offerRepository.saveAndFlush(offerToUpdate)
+        return offerRepository
+            .saveAndFlush(offerToUpdate)
             .also { logger.info { "Successfully updated offer: $it" } }
             .toDetailsDTO()
     }

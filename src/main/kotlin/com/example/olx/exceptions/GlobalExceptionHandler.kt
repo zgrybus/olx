@@ -15,18 +15,21 @@ import org.springframework.web.context.request.WebRequest
 @Order(Ordered.LOWEST_PRECEDENCE)
 @RestControllerAdvice
 class GlobalExceptionHandler : Loggable {
-
     @ExceptionHandler(Exception::class)
-    fun handleException(ex: Exception, request: WebRequest): ResponseEntity<ErrorResponse> {
+    fun handleException(
+        ex: Exception,
+        request: WebRequest,
+    ): ResponseEntity<ErrorResponse> {
         logger.error { "An exception occurred: $ex" }
 
         val errorDTO = ErrorDTO(type = ErrorType.SOMETHING_WENT_WRONG, message = "An exception occurred")
 
-        val errorResponse = ErrorResponse(
-            errors = listOf(errorDTO),
-            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            path = request.getDescription(false)
-        )
+        val errorResponse =
+            ErrorResponse(
+                errors = listOf(errorDTO),
+                status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                path = request.getDescription(false),
+            )
 
         return ResponseEntity(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR)
     }

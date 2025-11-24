@@ -4,7 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "2.2.21"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
 }
 
 group = "com.example"
@@ -66,7 +66,8 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
 }
 
-tasks.withType<Test>()
+tasks
+    .withType<Test>()
     .configureEach {
         useJUnitPlatform()
     }

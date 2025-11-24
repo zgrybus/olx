@@ -12,12 +12,10 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.testcontainers.containers.PostgreSQLContainer
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = [BaseIntegrationTest.Initializer::class])
 abstract class BaseIntegrationTest : DescribeSpec() {
-
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -32,12 +30,12 @@ abstract class BaseIntegrationTest : DescribeSpec() {
         override fun initialize(context: ConfigurableApplicationContext) {
             postgres.start()
 
-            TestPropertyValues.of(
-                "spring.datasource.url=${postgres.jdbcUrl}",
-                "spring.datasource.username=${postgres.username}",
-                "spring.datasource.password=${postgres.password}",
-            )
-                .applyTo(context.environment)
+            TestPropertyValues
+                .of(
+                    "spring.datasource.url=${postgres.jdbcUrl}",
+                    "spring.datasource.username=${postgres.username}",
+                    "spring.datasource.password=${postgres.password}",
+                ).applyTo(context.environment)
         }
     }
 }
