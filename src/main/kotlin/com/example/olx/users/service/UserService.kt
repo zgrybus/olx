@@ -18,9 +18,9 @@ class UserService(
 ) : Loggable {
     @Transactional
     fun createUser(userRequestDTO: UserRequestDTO): UserDetailsDTO {
-        logger.info { "Attempt to create user ${userRequestDTO.username}" }
+        logger.info { "Attempt to create user ${userRequestDTO.username!!}" }
 
-        if (userRepository.existsByUsername(userRequestDTO.username)) {
+        if (userRepository.existsByUsername(userRequestDTO.username!!)) {
             throw UsernameAlreadyExistsException("Username already taken")
         }
 

@@ -5,6 +5,6 @@ import com.example.olx.users.entity.User
 
 fun UserRequestDTO.toUser(password: String): User =
     User(
-        username = this.username,
+        username = this.username!!,
         password = password,
     )
