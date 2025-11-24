@@ -66,7 +66,9 @@ export function RemoveOfferDialog({ offerId }: RemoveOfferDialogProps) {
             variant="destructive"
             loading={isPending}
             onClick={() =>
-              removeOfferMutation({ params: { path: { offerId } } })
+              removeOfferMutation({
+                params: { path: { offerId } },
+              })
             }
           >
             Delete Offer

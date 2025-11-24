@@ -9,6 +9,23 @@ import testingLibrary from 'eslint-plugin-testing-library';
 import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 
 export default defineConfig([
+  {
+    ignores: [
+      'dist',
+      'node_modules',
+      'coverage',
+      '**/*.config.js',
+      '**/*.config.ts',
+    ],
+  },
+  {
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+  },
+
   ...tseslint.configs.recommended,
   tanstackConfig,
   reactPlugin.configs.flat.recommended,

@@ -7,29 +7,45 @@ import com.example.olx.offers.service.OfferService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/offers")
 @Validated
-class OfferController(val offerService: OfferService) {
-
+class OfferController(
+    val offerService: OfferService,
+) {
     @GetMapping
     fun getAllOffers(): List<OfferSummaryDTO> = offerService.getAllOffers()
 
     @GetMapping("/{offerId}")
-    fun getOfferById(@PathVariable offerId: Long): OfferDetailsDTO = offerService.getOfferById(offerId)
+    fun getOfferById(
+        @PathVariable offerId: Long,
+    ): OfferDetailsDTO = offerService.getOfferById(offerId)
 
     @DeleteMapping("/{offerId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteOfferById(@PathVariable offerId: Long) = offerService.deleteOfferById(offerId)
+    fun deleteOfferById(
+        @PathVariable offerId: Long,
+    ) = offerService.deleteOfferById(offerId)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun addOffer(@RequestBody @Valid offerRequestDTO: OfferRequestDTO): OfferDetailsDTO =
-        offerService.addOffer(offerRequestDTO)
+    fun addOffer(
+        @RequestBody @Valid offerRequestDTO: OfferRequestDTO,
+    ): OfferDetailsDTO = offerService.addOffer(offerRequestDTO)
 
     @PutMapping("/{offerId}")
-    fun updatePost(@PathVariable offerId: Long, @RequestBody @Valid offerRequestDTO: OfferRequestDTO): OfferDetailsDTO =
-        offerService.updateOffer(offerId, offerRequestDTO)
+    fun updatePost(
+        @PathVariable offerId: Long,
+        @RequestBody @Valid offerRequestDTO: OfferRequestDTO,
+    ): OfferDetailsDTO = offerService.updateOffer(offerId, offerRequestDTO)
 }

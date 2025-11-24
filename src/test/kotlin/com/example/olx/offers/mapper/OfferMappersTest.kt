@@ -8,16 +8,16 @@ import io.kotest.matchers.shouldBe
 import java.time.Instant
 
 class OfferMappersTest : DescribeSpec() {
-
     private val testInstant = Instant.now()
-    private val baseOffer = Offer(
-        id = 1L,
-        title = "Test Offer",
-        description = "Test Description",
-        price = 100,
-        createdAt = testInstant,
-        updatedAt = testInstant
-    )
+    private val baseOffer =
+        Offer(
+            id = 1L,
+            title = "Test Offer",
+            description = "Test Description",
+            price = 100,
+            createdAt = testInstant,
+            updatedAt = testInstant,
+        )
 
     init {
         describe("toSummaryDTO") {
@@ -34,32 +34,45 @@ class OfferMappersTest : DescribeSpec() {
 
             describe("Exception") {
                 it("throws exception when id is null") {
-                    val offerWithNull = Offer(
-                        id = null,
-                        title = "t",
-                        description = "d",
-                        price = 1,
-                        createdAt = testInstant,
-                        updatedAt = testInstant
-                    )
+                    val offerWithNull =
+                        Offer(
+                            id = null,
+                            title = "t",
+                            description = "d",
+                            price = 1,
+                            createdAt = testInstant,
+                            updatedAt = testInstant,
+                        )
                     shouldThrow<NullPointerException> {
                         offerWithNull.toSummaryDTO()
                     }
                 }
 
                 it("throws exception when createdAt is null") {
-                    val offerWithNull = Offer(
-                        id = 1L, title = "t", description = "d", price = 1, createdAt = null, updatedAt = testInstant
-                    )
+                    val offerWithNull =
+                        Offer(
+                            id = 1L,
+                            title = "t",
+                            description = "d",
+                            price = 1,
+                            createdAt = null,
+                            updatedAt = testInstant,
+                        )
                     shouldThrow<NullPointerException> {
                         offerWithNull.toSummaryDTO()
                     }
                 }
 
                 it("throws exception when updatedAt is null") {
-                    val offerWithNull = Offer(
-                        id = 1L, title = "t", description = "d", price = 1, createdAt = testInstant, updatedAt = null
-                    )
+                    val offerWithNull =
+                        Offer(
+                            id = 1L,
+                            title = "t",
+                            description = "d",
+                            price = 1,
+                            createdAt = testInstant,
+                            updatedAt = null,
+                        )
                     shouldThrow<NullPointerException> {
                         offerWithNull.toSummaryDTO()
                     }
@@ -81,32 +94,45 @@ class OfferMappersTest : DescribeSpec() {
 
             describe("Exception") {
                 it("throws exception when id is null") {
-                    val offerWithNull = Offer(
-                        id = null,
-                        title = "t",
-                        description = "d",
-                        price = 1,
-                        createdAt = testInstant,
-                        updatedAt = testInstant
-                    )
+                    val offerWithNull =
+                        Offer(
+                            id = null,
+                            title = "t",
+                            description = "d",
+                            price = 1,
+                            createdAt = testInstant,
+                            updatedAt = testInstant,
+                        )
                     shouldThrow<NullPointerException> {
                         offerWithNull.toDetailsDTO()
                     }
                 }
 
                 it("throws exception when createdAt is null") {
-                    val offerWithNull = Offer(
-                        id = 1L, title = "t", description = "d", price = 1, createdAt = null, updatedAt = testInstant
-                    )
+                    val offerWithNull =
+                        Offer(
+                            id = 1L,
+                            title = "t",
+                            description = "d",
+                            price = 1,
+                            createdAt = null,
+                            updatedAt = testInstant,
+                        )
                     shouldThrow<NullPointerException> {
                         offerWithNull.toDetailsDTO()
                     }
                 }
 
                 it("throws exception when updatedAt is null") {
-                    val offerWithNull = Offer(
-                        id = 1L, title = "t", description = "d", price = 1, createdAt = testInstant, updatedAt = null
-                    )
+                    val offerWithNull =
+                        Offer(
+                            id = 1L,
+                            title = "t",
+                            description = "d",
+                            price = 1,
+                            createdAt = testInstant,
+                            updatedAt = null,
+                        )
                     shouldThrow<NullPointerException> {
                         offerWithNull.toDetailsDTO()
                     }
@@ -115,11 +141,12 @@ class OfferMappersTest : DescribeSpec() {
         }
 
         describe("toUpdateWithRequestDto") {
-            val dto = OfferRequestDTO(
-                title = "Updated Title",
-                description = "Updated Description",
-                price = 200
-            )
+            val dto =
+                OfferRequestDTO(
+                    title = "Updated Title",
+                    description = "Updated Description",
+                    price = 200,
+                )
 
             it("updates an Offer entity with values from a DTO") {
                 val updatedOffer = baseOffer.toUpdateWithRequestDto(dto)

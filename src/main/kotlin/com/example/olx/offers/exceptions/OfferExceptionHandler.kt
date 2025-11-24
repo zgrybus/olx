@@ -17,35 +17,43 @@ import org.springframework.web.context.request.WebRequest
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = [OfferController::class])
 class OfferExceptionHandler : Loggable {
-
     @ExceptionHandler(OfferNotFoundException::class)
-    fun handleOfferNotFound(ex: OfferNotFoundException, request: WebRequest): ResponseEntity<ErrorResponse> {
+    fun handleOfferNotFound(
+        ex: OfferNotFoundException,
+        request: WebRequest,
+    ): ResponseEntity<ErrorResponse> {
         logger.error { "Offer not found: $ex" }
 
         val errorDTO = ErrorDTO(type = ErrorType.NOT_FOUND, message = ex.message ?: "Offer not found")
 
-        val errorResponse = ErrorResponse(
-            errors = listOf(errorDTO),
-            status = HttpStatus.NOT_FOUND.value(),
-            path = request.getDescription(false)
-        )
+        val errorResponse =
+            ErrorResponse(
+                errors = listOf(errorDTO),
+                status = HttpStatus.NOT_FOUND.value(),
+                path = request.getDescription(false),
+            )
 
         return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleOfferNotValid(ex: MethodArgumentNotValidException, request: WebRequest): ResponseEntity<ErrorResponse> {
+    fun handleOfferNotValid(
+        ex: MethodArgumentNotValidException,
+        request: WebRequest,
+    ): ResponseEntity<ErrorResponse> {
         logger.error { "Offer not valid: $ex" }
 
-        val errorsDTO = ex.fieldErrors.map {
-            ErrorDTO(type = ErrorType.NOT_VALID, message = it.defaultMessage ?: "Argument is not valid")
-        }
+        val errorsDTO =
+            ex.fieldErrors.map {
+                ErrorDTO(type = ErrorType.NOT_VALID, message = it.defaultMessage ?: "Argument is not valid")
+            }
 
-        val errorResponse = ErrorResponse(
-            errors = errorsDTO,
-            status = HttpStatus.BAD_REQUEST.value(),
-            path = request.getDescription(false)
-        )
+        val errorResponse =
+            ErrorResponse(
+                errors = errorsDTO,
+                status = HttpStatus.BAD_REQUEST.value(),
+                path = request.getDescription(false),
+            )
 
         return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
     }
