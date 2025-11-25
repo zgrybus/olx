@@ -27,7 +27,7 @@ class UserExceptionHandler : Loggable {
 
         val errorDTO =
             ErrorDTO(
-                type = ErrorType.ALREADY_EXISTS,
+                type = ErrorType.CONFLICT,
                 message = message,
             )
 
