@@ -3,6 +3,7 @@ package com.example.olx.exceptions.dto
 enum class ErrorType {
     NOT_FOUND,
     NOT_VALID,
+    CONFLICT,
     SOMETHING_WENT_WRONG,
 }
 
