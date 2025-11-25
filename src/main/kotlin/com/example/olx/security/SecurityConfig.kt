@@ -1,4 +1,4 @@
-package com.example.olx.security.config
+package com.example.olx.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
