@@ -1,22 +1,25 @@
-package com.example.olx.auth.security
+package com.example.olx.users.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
-class AuthSecurityConfig {
+class UserSecurityConfig {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun userSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .securityMatcher("/api/auth/**")
+            .securityMatcher("/api/users/**")
             .csrf {
                 it.disable()
             }.authorizeHttpRequests { auth ->
                 auth
-                    .anyRequest()
+                    .requestMatchers(HttpMethod.POST, "/api/users")
                     .permitAll()
+                    .anyRequest()
+                    .authenticated()
             }
 
         return http.build()
