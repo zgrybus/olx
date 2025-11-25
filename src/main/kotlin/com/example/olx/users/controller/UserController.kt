@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     val userService: UserService,
 ) {
-    @PostMapping("/register")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     fun createUser(
         @RequestBody @Valid user: UserRequestDTO,

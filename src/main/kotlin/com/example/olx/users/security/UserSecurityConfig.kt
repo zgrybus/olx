@@ -16,7 +16,7 @@ class UserSecurityConfig {
                 it.disable()
             }.authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers(HttpMethod.POST, "/api/users/register")
+                    .requestMatchers(HttpMethod.POST, "/api/users")
                     .permitAll()
                     .anyRequest()
                     .authenticated()
