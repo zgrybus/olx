@@ -9,4 +9,6 @@ interface UserRepository :
     JpaRepository<User, UUID>,
     JpaSpecificationExecutor<User> {
     fun existsByUsername(username: String): Boolean
+
+    fun findByUsername(username: String): User?
 }
